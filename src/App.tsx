@@ -22,6 +22,7 @@ import {
   Image,
   AspectRatio,
   AspectImage,
+  Text,
 } from 'theme-ui';
 import { useResponsiveValue } from '@theme-ui/match-media';
 import { useTheme } from '@emotion/react';
@@ -98,7 +99,10 @@ const MainView = () => {
     queryFn: async () => {
       const res = await fetch(process.env.PUBLIC_URL + "/data/capitals.json")
       const collection: FeatureCollection = await res.json();
-      return keyBy(collection.features, 'id')
+      return keyBy(
+        collection.features.filter((feature) => feature.properties.city !== undefined),
+        'id'
+      )
     },
     queryKey: process.env.PUBLIC_URL + "/data/capitals.json",
   })
@@ -155,7 +159,8 @@ const Details = memo(({
   return (
     <>
       <Flex>
-        <Heading sx={{ flex: '1 1 auto' }}>{feature.properties.city}</Heading>
+        <Heading sx={{ flex: '1 1 auto' }}>
+          <Text sx={{ fontWeight: 'light' }}>{number}.</Text> {feature.properties.city}</Heading>
         <CloseButton onClick={deselect} />
       </Flex>
       <Box>
@@ -195,7 +200,7 @@ const ImageCollection = ({ id }) => {
         pb: '3',
       }}>
         {collection.items.map(({ imageUrl }, index) =>
-          <LightGalleryItem src={imageUrl}>
+          <LightGalleryItem src={imageUrl} key={`${imageUrl}-${index}`}>
             <AspectRatio ratio={1 / 1}>
               <Image
                 src={imageUrl}
@@ -228,10 +233,10 @@ const MapView = memo(({
   capitals: Record<string, PointFeature> | undefined
 }) => {
   const theme: any = useTheme();
-  const colors = {
+  const colors = useMemo(() => ({
     default: theme.colors.cyanDark,
     selected: theme.colors.cyanLight
-  }
+  }), [theme]);
   return (
     <ComposableMap
       projection="geoMercator"
@@ -264,7 +269,7 @@ const MapView = memo(({
                   strokeWidth={0.25}
                 />
                 <text
-                  style={{ fontSize: '1pt' }}
+                  style={{ fontSize: '1pt', fontWeight: id === selectedId ? 'bold' : 'normal' }}
                   textAnchor="middle"
                   dominantBaseline="central"
                   fill="#333"
@@ -277,7 +282,7 @@ const MapView = memo(({
               </text>
             </Marker>
           )
-        ), [capitals, selectedId, setSelectedId])}
+        ), [capitals, selectedId, setSelectedId, colors])}
       </ZoomableGroup>
     </ComposableMap>
   )
