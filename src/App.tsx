@@ -105,7 +105,7 @@ const MapView = () => {
         sx={{
           position: 'absolute', zIndex: 20,
           ...detailsLayoutStyle,
-          background: 'white',
+          background: 'background',
           padding: '3',
           border: '1px solid',
           borderColor: 'gray.2',
