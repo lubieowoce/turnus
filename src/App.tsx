@@ -1,4 +1,4 @@
-import { keyBy } from 'lodash'
+import { keyBy, sample } from 'lodash'
 import {
   ComposableMap,
   Geographies,
@@ -15,15 +15,25 @@ import {
   Paragraph,
   Theme,
   ThemeProvider,
-  Text,
   Divider,
   Flex,
-  IconButton,
+  Close,
+  Spinner,
+  Image,
+  AspectRatio,
+  AspectImage,
 } from 'theme-ui';
 import { useResponsiveValue } from '@theme-ui/match-media';
-import baseTheme from 'theme-ui-preset-geist';
-import { useBoundingclientrect as useBoundingClientRect } from 'rooks';
 import { useTheme } from '@emotion/react';
+import baseTheme from 'theme-ui-preset-geist';
+
+import { useBoundingclientrect as useBoundingClientRect } from 'rooks';
+import {
+  LightgalleryProvider as LightGalleryProvider,
+  LightgalleryItem as LightGalleryItem,
+  useLightgallery as useLightGallery
+} from "react-lightgallery";
+import "lightgallery.js/dist/css/lightgallery.css";
 
 const theme: Theme = merge(baseTheme as Theme, {
   styles: {
@@ -34,7 +44,16 @@ const theme: Theme = merge(baseTheme as Theme, {
 })
 
 const Root = () => {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() =>
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          cacheTime: Infinity,
+          staleTime: Infinity,
+        }
+      }
+    })
+  );
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme as Theme}>
@@ -50,7 +69,7 @@ export default Root;
 const App = () => {
   return (
     <div className="App">
-      <MapView />
+      <MainView />
     </div>
   );
 }
@@ -74,13 +93,14 @@ type FeatureCollection = {
   "features": PointFeature[]
 }
 
-const MapView = () => {
+const MainView = () => {
   const capitals = useQuery({
     queryFn: async () => {
       const res = await fetch(process.env.PUBLIC_URL + "/data/capitals.json")
       const collection: FeatureCollection = await res.json();
       return keyBy(collection.features, 'id')
-    }
+    },
+    queryKey: process.env.PUBLIC_URL + "/data/capitals.json",
   })
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -93,7 +113,7 @@ const MapView = () => {
   return (
     <Box ref={containerRef} sx={{ position: 'relative', height: '100vh', width: '100vw' }}>
       <Box sx={{ position: 'absolute', zIndex: 10, height: '100%', overflow: 'hidden' }}>
-        <MapThingy
+        <MapView
           width={containerRect?.width ?? 1280}
           height={containerRect?.height ?? 768}
           capitals={capitals.data}
@@ -109,6 +129,7 @@ const MapView = () => {
           padding: '3',
           border: '1px solid',
           borderColor: 'gray.2',
+          overflowY: 'auto', maxHeight: '100%'
         }}
         style={{ display: selectedId ? 'block' : 'none' }}>
         {capitals.data && selectedId &&
@@ -137,38 +158,63 @@ const Details = memo(({
         <Heading sx={{ flex: '1 1 auto' }}>{feature.properties.city}</Heading>
         <CloseButton onClick={deselect} />
       </Flex>
-      <Paragraph>{feature.properties.country}</Paragraph>
-      <Divider />
-      <FakeImage seed={number} text={selectedId} />
-      <Paragraph mt={"0.5em"}>Lorem ipsum, dolor sit amet</Paragraph>
+      <Box>
+        <Paragraph>{feature.properties.country}</Paragraph>
+        <Divider />
+        <LightGalleryProvider>
+          <ImageCollection id={selectedId} />
+        </LightGalleryProvider>
+      </Box>
     </>
   );
 })
 
-const CloseButton = ({ onClick }) => (
-  <IconButton onClick={onClick} sx={{ cursor: 'pointer' }}>
-    <text style={{ fontSize: '1.5em', verticalAlign: 'center' }}>&times;</text>
-  </IconButton>
-)
-
-const FakeImage = ({ seed, text }) => {
-  const colors = [
-    'success',
-    'warning',
-    'cyan',
-    'violetLight',
-    'magenta',
-  ]
-  const color = colors[seed % colors.length]
+const ImageCollection = ({ id }) => {
+  const GALLERY_GROUP = `gallery-group-${id}`;
+  const { data: collection } = useQuery({
+    queryFn: () => getImageCollection({ id }),
+    queryKey: `collections/${id}`,
+    staleTime: Infinity,
+    cacheTime: Infinity,
+  });
+  const { openGallery } = useLightGallery();
+  if (!collection) {
+    return (
+      <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Spinner />
+      </Box>
+    )
+  }
   return (
-    <Box bg={color} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Text sx={{ color: 'rgba(255,255,255, 0.3)', fontSize: '5em' }}>{text}</Text>
+    <Box>
+      <Paragraph mb="1em">{collection.description}</Paragraph>
+      <Box sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 1fr)', 
+        gap: '10px 10px',
+        pb: '3',
+      }}>
+        {collection.items.map(({ imageUrl }, index) =>
+          <LightGalleryItem src={imageUrl}>
+            <AspectRatio ratio={1 / 1}>
+              <Image
+                src={imageUrl}
+                sx={{ objectFit: 'cover', height: '100%', width: '100%', cursor: 'pointer' }}
+                onClick={() => openGallery(GALLERY_GROUP, index)}
+              />
+            </AspectRatio>
+          </LightGalleryItem>
+        )}
+      </Box>
     </Box>
   )
-
 }
 
-const MapThingy = memo(({
+const CloseButton = ({ onClick }) => (
+  <Close onClick={onClick} sx={{ cursor: 'pointer' }} />
+)
+
+const MapView = memo(({
   width,
   height,
   capitals,
@@ -236,4 +282,34 @@ const MapThingy = memo(({
     </ComposableMap>
   )
 });
+
+const getImageCollection = async ({ id }) => {
+  const length = 3 + Math.floor(Math.random() * 5)
+  const promises: Promise<string>[] = []
+  for (let i = 0; i < length; i++) {
+    promises.push(getRandomImage())
+  }
+  const urls = await Promise.all(promises);
+  return {
+    description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`,
+    items: urls.map((imageUrl) => ({
+      imageUrl,
+      description: 'Lorem ipsum dolor sit amet.',
+    }))
+  }
+}
+
+const getRandomImage = async (): Promise<string> => {
+  const queries = [
+    'city,day',
+    'city,night',
+    'landscape,day',
+    'landscape,sunset',
+    'village,mountains',
+    'architecure,bright',
+    'architecure,dark',
+  ]
+  const res = await fetch(`https://source.unsplash.com/random/?${sample(queries)}&cacheBust=${Date.now()}`, { cache: 'no-store' });
+  return res.url
+}
 
