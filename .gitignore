@@ -8,5 +8,5 @@ plugins/*
 !plugins/.*
 themes/*
 !themes/.*
-# !themes/MY_CUSTOM_THEME/
+!themes/json/
 **/config/security.yaml
