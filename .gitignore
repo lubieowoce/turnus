@@ -8,5 +8,5 @@ plugins/*
 !plugins/.*
 themes/*
 !themes/.*
-!themes/json/
+!themes/mostly-json/
 **/config/security.yaml

@@ -1,5 +1,5 @@
-name: Json
-slug: json
+name: Mostly JSON
+slug: mostly-json
 type: theme
 version: 0.1.0
 description: Returns content as JSON
