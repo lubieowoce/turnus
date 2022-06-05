@@ -1,4 +1,5 @@
-import { sample } from "lodash"
+import { keyBy, sample } from "lodash"
+import { useQuery } from "react-query"
 
 export type PointFeature = {
   "properties": {
@@ -19,6 +20,19 @@ export type FeatureCollection = {
   "features": PointFeature[],
 }
 
+export const usePlaces = () => {
+  return useQuery({
+    queryFn: async () => {
+      const res = await fetch(process.env.PUBLIC_URL + "/data/capitals.json")
+      const collection: FeatureCollection = await res.json();
+      return keyBy(
+        collection.features.filter((feature) => feature.properties.city !== undefined),
+        'id'
+      )
+    },
+    queryKey: process.env.PUBLIC_URL + "/data/capitals.json",
+  })
+}
 
 export const getImageCollection = async ({ id }) => {
   const length = 3 + Math.floor(Math.random() * 5)
