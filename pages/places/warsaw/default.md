@@ -1,5 +1,8 @@
 ---
 title: Warsaw
+coordinates:
+  lat: 52.229675
+  lon: 21.012230
 ---
 
 Lorem ipsum dolor sit amet!
