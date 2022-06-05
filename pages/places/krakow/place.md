@@ -1,5 +1,5 @@
 ---
-title: Cracow
+title: Kraków
 coordinates:
   lat: 50.698811
   lon: 20.186581

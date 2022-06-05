@@ -1,11 +1,10 @@
 {{
     {
-        meta: page.header,
         count: count(page.collection),
         items: page.collection | map(p => {
             name: p.title,
             id: p.slug,
-            description: p.summary(50)|raw,
+            description: p.summary(50) | striptags,
             coordinates: p.header.coordinates
         }),
     }

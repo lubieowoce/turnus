@@ -1,5 +1,5 @@
 ---
-title: Warsaw
+title: Warszawa
 coordinates:
   lat: 52.229675
   lon: 21.012230

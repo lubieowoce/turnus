@@ -1,0 +1,9 @@
+{{
+    {
+        name: page.title,
+        id: page.slug,
+        description: page.summary(50) | striptags,
+        coordinates: page.header.coordinates
+    }
+    | json_encode | raw
+}}

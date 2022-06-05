@@ -1,0 +1,21 @@
+title: Place
+'@extends':
+    type: default
+    context: blueprints://pages
+form:
+  fields:
+    tabs:
+      type: tabs
+      active: 1
+      fields:
+        content:
+          type: tab
+          fields:
+             header.coordinates.lat:
+              type: text
+              label: 'Latitude'
+              placeholder: '52.229675'
+             header.coordinates.lon:
+              type: text
+              label: 'Longitude'
+              placeholder: '21.012230'

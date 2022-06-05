@@ -10,6 +10,7 @@ pages:
   process:
     markdown: true
     twig: false
+  types: [html,htm,xml,txt,json,rss,atom,csv]
 
 cache:
   enabled: true
