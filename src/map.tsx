@@ -7,30 +7,38 @@ import {
 } from "react-simple-maps";
 import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import {
-  Box,
+  Box, Container, Spinner,
 } from 'theme-ui';
 import { useTheme } from '@emotion/react';
 
-import { PointFeature, usePlaces } from "./api";
+import { Place, PlaceId, usePlaces, Geography as GeographyType, useMapGeography } from "./api";
 import { useBoundingclientrect as useBoundingClientRect } from 'rooks';
 
 
 
 export const MapView = ({ selectedId, setSelectedId }) => {
   const places = usePlaces();
+  const geography = useMapGeography();
   const containerRef = useRef<HTMLDivElement>(null);
   const containerRect = useBoundingClientRect(containerRef);
 
   return (
     <Box ref={containerRef} sx={{ position: 'relative', height: '100vh', width: '100vw' }}>
       <Box sx={{ position: 'absolute', zIndex: 10, height: '100%', overflow: 'hidden' }}>
-        <Map
-          width={containerRect?.width ?? 1280}
-          height={containerRect?.height ?? 768}
-          places={places.data}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-        />
+        {geography.isSuccess ?
+          <Map
+            width={containerRect?.width ?? 1280}
+            height={containerRect?.height ?? 768}
+            places={places.data?.items}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            geography={geography.data}
+          />
+          :
+          <Container>
+            <Spinner />
+          </Container>
+        }
       </Box>
     </Box>
   );
@@ -42,12 +50,14 @@ export const Map = memo(({
   places,
   selectedId,
   setSelectedId,
+  geography,
 }: {
   width: number,
   height: number,
   selectedId: string | null,
   setSelectedId: (id: string | null) => void,
-  places: Record<string, PointFeature> | undefined
+  places: Record<PlaceId, Place> | undefined,
+  geography: GeographyType,
 }) => {
   const theme: any = useTheme();
   const colors = useMemo(() => ({
@@ -62,7 +72,7 @@ export const Map = memo(({
       style={{ height: '100%' }}
     >
       <ZoomableGroup zoom={1}>
-        <Geographies geography={process.env.PUBLIC_URL + "/data/world-110m.json"}>
+        <Geographies geography={geography}>
           {useCallback(({ geographies }) => geographies.map(geo => (
             <Geography
               key={geo.rsmKey}
@@ -74,7 +84,7 @@ export const Map = memo(({
         </Geographies>
         {useMemo(() => (
           places && Object.values(places).map(
-            ({ id, properties, geometry: { coordinates } }, index) => <Marker key={id} coordinates={coordinates}>
+            ({ id, coordinates: { lat, lon }, name }, index) => <Marker key={id} coordinates={[lon, lat]}>
               <g
                 onClick={() => setSelectedId(id)}
                 style={{ cursor: 'pointer', userSelect: 'none' }}
@@ -95,7 +105,7 @@ export const Map = memo(({
                 </text>
               </g>
               <text y={-2.5} style={{ fontSize: '1pt', userSelect: 'none' }} textAnchor="middle" fill="#333">
-                {properties.city}
+                {name}
               </text>
             </Marker>
           )

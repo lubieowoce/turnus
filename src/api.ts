@@ -1,36 +1,61 @@
 import { keyBy, sample } from "lodash"
 import { useQuery } from "react-query"
 
-export type PointFeature = {
-  "properties": {
-    "country": string,
-    "city": string,
-    "tld": string,
-    "iso3": string,
-    "iso2": string,
+const API_ROOT = 'http://localhost:3000'
+// const API_ROOT = 'https://localhost:8000'
+
+export type PlaceId = string;
+
+export type Place = {
+  "name": string,
+  "id": PlaceId,
+  "description": string,
+  "coordinates": {
+    "lat": number,
+    "lon": number,
   },
-  "geometry": {
-    "coordinates": [lon: number, lat: number],
-    "type": "Point"
-  },
-  "id": string,
 }
-export type FeatureCollection = {
-  "type": "FeatureCollection",
-  "features": PointFeature[],
+
+export type PlaceDetails = {
+  "name": string,
+  "id": PlaceId,
+  "description": string,
+  "coordinates": {
+    "lat": number,
+    "lon": number,
+  },
+}
+
+export type Places = {
+  "meta": Record<string, any>,
+  "count": number,
+  "items": Record<PlaceId, Place>,
 }
 
 export const usePlaces = () => {
+  const url = `${API_ROOT}/places.json`
   return useQuery({
     queryFn: async () => {
-      const res = await fetch(process.env.PUBLIC_URL + "/data/capitals.json")
-      const collection: FeatureCollection = await res.json();
-      return keyBy(
-        collection.features.filter((feature) => feature.properties.city !== undefined),
-        'id'
-      )
+      const res = await fetch(url)
+      return await res.json() as Places;
     },
-    queryKey: process.env.PUBLIC_URL + "/data/capitals.json",
+    queryKey: url,
+  })
+}
+
+export type Geography = {
+  type: "Topology",
+  [key: string]: any,
+}
+
+export const useMapGeography = () => {
+  const url = `${process.env.PUBLIC_URL}/data/world-110m.json`
+  return useQuery({
+    queryFn: async () => {
+      const res = await fetch(url);
+      return await res.json() as Geography;
+    },
+    queryKey: url,
   })
 }
 

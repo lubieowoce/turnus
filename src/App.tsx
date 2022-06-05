@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { useCallback, useEffect, useState } from 'react';
 import {
   Box,
@@ -30,6 +31,8 @@ const Root = () => {
         queries: {
           cacheTime: Infinity,
           staleTime: Infinity,
+          refetchOnMount: false,
+          refetchOnWindowFocus: false,
         }
       }
     })
@@ -39,6 +42,7 @@ const Root = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
+        <ReactQueryDevtools />
         <Router
           location={location}
           routes={routes}
@@ -77,9 +81,9 @@ const PlacesIndex = () => {
     <Flex style={{ padding: '1em', flexWrap: 'wrap'}}>
       {places.isLoading && <Spinner />}
       {places.isSuccess && (
-        Object.values(places.data).map((place) =>
+        Object.values(places.data.items).map((place) =>
           <Link key={place.id} to={`/miejscowosci/${place.id}`}>
-            <Box p='1em'>{place.properties.city}</Box>
+            <Box p='1em'>{place.name}</Box>
           </Link>
         )
       )}
@@ -96,7 +100,7 @@ const PlaceDetailsRoute = () => {
       {places.data ? (
         <PlaceDetails
           placeId={placeId}
-          places={places.data}
+          places={places.data.items}
         />
       ) : <Spinner />}
     </div>

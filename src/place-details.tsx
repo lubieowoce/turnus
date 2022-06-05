@@ -20,7 +20,7 @@ import {
 } from "react-lightgallery";
 import "lightgallery.js/dist/css/lightgallery.css";
 
-import { getImageCollection, PointFeature, usePlaces } from "./api";
+import { getImageCollection, PlaceDetails as PlaceDetailsType } from "./api";
 import { useGoBack } from './utils';
 
 export const PlaceDetails = memo(({
@@ -28,20 +28,20 @@ export const PlaceDetails = memo(({
   places,
 }: {
   placeId: string,
-  places: Record<string, PointFeature>
+  places: Record<string, PlaceDetailsType>,
 }) => {
-  const feature = places[placeId];
+  const place = places[placeId];
   const number = useMemo(() => Object.keys(places).indexOf(placeId), [places, placeId]);
   const close = useGoBack();
   return (
     <>
       <Flex>
         <Heading sx={{ flex: '1 1 auto' }}>
-          <Text sx={{ fontWeight: 'light' }}>{number}.</Text> {feature.properties.city}</Heading>
+          <Text sx={{ fontWeight: 'light' }}>{number}.</Text> {place.name}</Heading>
         <CloseButton onClick={close} />
       </Flex>
       <Box>
-        <Paragraph>{feature.properties.country}</Paragraph>
+        <Paragraph>{place.description}</Paragraph>
         <Divider />
         <LightGalleryProvider>
           <ImageCollection id={placeId} />
