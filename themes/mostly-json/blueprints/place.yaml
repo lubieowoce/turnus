@@ -11,11 +11,23 @@ form:
         content:
           type: tab
           fields:
-             header.coordinates.lat:
-              type: text
-              label: 'Latitude'
-              placeholder: '52.229675'
-             header.coordinates.lon:
-              type: text
-              label: 'Longitude'
-              placeholder: '21.012230'
+            coordinates_form:
+              type: fieldset
+              legend: 'Coordinates'
+              fields:
+                description:
+                  type: display
+                  size: large
+                  label: Coordinates
+                  markdown: true
+                  content: "Find the correct coordinates on a site like [latlong.net](https://www.latlong.net/)"
+                header.coordinates.lat:
+                  type: text
+                  label: 'Latitude'
+                  placeholder: '52.229675'
+                  validate.required: true
+                header.coordinates.lon:
+                  type: text
+                  label: 'Longitude'
+                  placeholder: '21.012230'
+                  validate.required: true
