@@ -5,5 +5,6 @@ author:
 metadata:
   description: 'Grav is an easy to use, yet powerful, open source flat-file CMS'
 routes:
-   /api/(.*): '/$1'
+  '(?<!/api/)(.*)': '/home' # show the SPA root for every path that's not an API call
+  '/api/(.*)': '/$1' # map every API call to its corresponding content
 
