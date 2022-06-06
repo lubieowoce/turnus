@@ -97,7 +97,7 @@ export type Geography = {
 }
 
 export const useMapGeography = () => {
-  const url = `${process.env.PUBLIC_URL}/data/world-110m.json`
+  const url = `${process.env.PUBLIC_URL}/data/wojewodztwa-min.geojson`
   return useQuery({
     queryFn: async () => {
       const res = await fetch(url);

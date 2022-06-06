@@ -9,7 +9,7 @@ export const theme: Theme = merge(baseTheme as Theme, {
   styles: {
     root: {
       height: '100%',
-    }
+    },
   },
   fonts: {
     body: 'serif',

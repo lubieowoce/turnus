@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   Box,
   Flex,
@@ -22,6 +22,7 @@ import {
 import { usePlace, usePlaces } from './api';
 import { PlaceDetails } from './place-details';
 import { useGoBack } from './utils';
+import { LayoutContextProvider, useLayoutCalculator } from './support/layout-context';
 
 
 const Root = () => {
@@ -62,16 +63,23 @@ const MainLayout = () => {
   ]
   const linksRight = [
     <Link style={fancyTextStyle} to={'/info'}>Info</Link>
-  ]
+  ];
+  const mainRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const dimensions = useLayoutCalculator({ mainRef, headerRef });
   return (
-    <div>
-      <Flex>
-        {linksLeft.map((el) => <Box p='1em'>{el}</Box>)}
+    <main ref={mainRef} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+      <Flex ref={headerRef} sx={{ flex: 'none' }}>
+        {linksLeft.map((el) => <Box key={el.props.to} p='1em'>{el}</Box>)}
         <div style={{ flex: '1 auto' }} />
-        {linksRight.map((el) => <Box p='1em'>{el}</Box>)}
+        {linksRight.map((el) => <Box key={el.props.to} p='1em'>{el}</Box>)}
       </Flex>
-      <Outlet />
-    </div>
+      <Box sx={{ flex: '1 auto', outline: '1px solid blue', backgroundColor: 'aliceblue' }}>
+        <LayoutContextProvider dimensions={dimensions}>
+          <Outlet />
+        </LayoutContextProvider>
+      </Box>
+    </main>
   )
 }
 
@@ -98,8 +106,6 @@ const PlacesIndex = () => {
 
 const PlaceDetailsRoute = () => {
   const { params: { placeId } } = useMatch();
-  useEffect(() => console.log('PlaceDetails', placeId), [placeId]);
-  // const places = usePlaces();
   const place = usePlace({ id: placeId });
   return (
     <div style={{ padding: '1em', flexWrap: 'wrap' }}>

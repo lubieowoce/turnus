@@ -5,7 +5,7 @@ import {
   Marker,
   ZoomableGroup
 } from "react-simple-maps";
-import { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box, Container, Spinner,
 } from 'theme-ui';
@@ -13,36 +13,37 @@ import { useTheme } from '@emotion/react';
 
 import { Place, PlaceId, usePlaces, Geography as GeographyType, useMapGeography } from "./api";
 import { useBoundingclientrect as useBoundingClientRect } from 'rooks';
+import { useDimensions } from "./support/layout-context";
 
 
 
 export const MapView = ({ selectedId, setSelectedId }) => {
   const places = usePlaces();
   const geography = useMapGeography();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const containerRect = useBoundingClientRect(containerRef);
-
+  const { mainWidth: width, mainHeight, headerHeight } = useDimensions();
+  const height = (mainHeight !== null && headerHeight !== null) ? mainHeight - headerHeight : null;
   return (
-    <Box ref={containerRef} sx={{ position: 'relative', height: '100vh', width: '100vw' }}>
-      <Box sx={{ position: 'absolute', zIndex: 10, height: '100%', overflow: 'hidden' }}>
-        {geography.isSuccess ?
-          <Map
-            width={containerRect?.width ?? 1280}
-            height={containerRect?.height ?? 768}
-            places={places.data?.items}
-            selectedId={selectedId}
-            setSelectedId={setSelectedId}
-            geography={geography.data}
-          />
-          :
-          <Container>
-            <Spinner />
-          </Container>
-        }
-      </Box>
+    <Box sx={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+      {(geography.isSuccess && width && height) ?
+        <Map
+          width={width}
+          height={height}
+          places={places.data?.items}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          geography={geography.data}
+        />
+        :
+        <Container>
+          <Spinner />
+        </Container>
+      }
     </Box>
   );
 }
+
+type Point = [lon: number, lat: number]
+const MAP_CENTER: Point = [19.2525, 52.0652]
 
 export const Map = memo(({
   width,
@@ -60,28 +61,51 @@ export const Map = memo(({
   geography: GeographyType,
 }) => {
   const theme: any = useTheme();
+  useEffect(() => {
+    console.log('Map', { width, height })
+  }, [width, height])
   const colors = useMemo(() => ({
     default: theme.colors.cyanDark,
-    selected: theme.colors.cyanLight
+    selected: theme.colors.cyanLight,
+    mapFill: 'rgb(194, 231, 254)',
   }), [theme]);
+  const sizes = {
+    marker: '10'
+  } 
   return (
     <ComposableMap
       projection="geoMercator"
+      projectionConfig={{
+        scale: 3000
+      }}
       width={width}
       height={height}
-      style={{ height: '100%' }}
+      style={{ height: '100%', backgroundColor: 'rgba(0,0,0,0.025)' }}
     >
-      <ZoomableGroup zoom={1}>
+      <ZoomableGroup /* zoom={8} minZoom={8} maxZoom={16} */ center={MAP_CENTER}>
         <Geographies geography={geography}>
           {useCallback(({ geographies }) => geographies.map(geo => (
             <Geography
               key={geo.rsmKey}
               geography={geo}
-              fill="#EAEAEC"
-              stroke="#D6D6DA"
-              strokeWidth="0.5" />
+              fill={colors.mapFill}
+              stroke="black"
+              strokeWidth="1"
+            />
           )), [])}
         </Geographies>
+        <Marker coordinates={MAP_CENTER}>
+          <g
+            style={{ cursor: 'pointer', userSelect: 'none' }}
+          >
+            <circle
+              r={sizes.marker}
+              fill={'tomato'}
+              stroke="#fff"
+              strokeWidth={0.25}
+            />
+          </g>
+        </Marker>
         {useMemo(() => (
           places && Object.values(places).map(
             ({ id, coordinates: { lat, lon }, name }, index) => <Marker key={id} coordinates={[lon, lat]}>
@@ -90,7 +114,7 @@ export const Map = memo(({
                 style={{ cursor: 'pointer', userSelect: 'none' }}
               >
                 <circle
-                  r={2}
+                  r={sizes.marker}
                   fill={id === selectedId ? colors.selected : colors.default}
                   stroke="#fff"
                   strokeWidth={0.25}
