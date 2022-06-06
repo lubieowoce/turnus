@@ -20,67 +20,61 @@ import {
 } from "react-lightgallery";
 import "lightgallery.js/dist/css/lightgallery.css";
 
-import { getImageCollection, PlaceDetails as PlaceDetailsType } from "./api";
+import { ImageSet as ImageSetType, PlaceDetails as PlaceDetailsType } from "./api";
 import { useGoBack } from './utils';
 
 export const PlaceDetails = memo(({
-  placeId,
-  places,
+  place,
 }: {
-  placeId: string,
-  places: Record<string, PlaceDetailsType>,
+  place: PlaceDetailsType,
 }) => {
-  const place = places[placeId];
-  const number = useMemo(() => Object.keys(places).indexOf(placeId), [places, placeId]);
   const close = useGoBack();
+  const imageSet = Object.values(place.imageSets)[0] ?? null
   return (
     <>
       <Flex>
-        <Heading sx={{ flex: '1 1 auto' }}>
-          <Text sx={{ fontWeight: 'light' }}>{number}.</Text> {place.name}</Heading>
+        <Heading as='h1' sx={{ flex: '1 1 auto' }}>
+          {place.name}
+        </Heading>
         <CloseButton onClick={close} />
       </Flex>
-      <Box>
-        <Paragraph>{place.description}</Paragraph>
-        <Divider />
-        <LightGalleryProvider>
-          <ImageCollection id={placeId} />
-        </LightGalleryProvider>
-      </Box>
+      {imageSet &&
+        <Box>
+          <Box sx={{ fontFamily: 'body' }} dangerouslySetInnerHTML={{ __html: place.description }} />
+          <Divider />
+          <LightGalleryProvider>
+            <ImageSetPreview imageSet={imageSet} />
+          </LightGalleryProvider>
+        </Box>
+      }
     </>
   );
 })
 
-const ImageCollection = ({ id }) => {
-  const GALLERY_GROUP = `gallery-group-${id}`;
-  const { data: collection } = useQuery({
-    queryFn: () => getImageCollection({ id }),
-    queryKey: `collections/${id}`,
-    staleTime: Infinity,
-    cacheTime: Infinity,
-  });
+const ImageSetPreview = ({ imageSet }: { imageSet: ImageSetType }) => {
+  const GALLERY_GROUP = `gallery-group-${imageSet.id}`;
   const { openGallery } = useLightGallery();
-  if (!collection) {
-    return (
-      <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Spinner />
-      </Box>
-    )
-  }
+  // if (!collection) {
+  //   return (
+  //     <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  //       <Spinner />
+  //     </Box>
+  //   )
+  // }
   return (
     <Box>
-      <Paragraph mb="1em">{collection.description}</Paragraph>
+      <Paragraph mb="1em">{imageSet.summary}</Paragraph>
       <Box sx={{
         display: 'grid',
         gridTemplateColumns: 'repeat(2, 1fr)',
         gap: '10px 10px',
         pb: '3',
       }}>
-        {collection.items.map(({ imageUrl }, index) =>
-          <LightGalleryItem src={imageUrl} key={`${imageUrl}-${index}`} group={GALLERY_GROUP}>
+        {Object.values(imageSet.media).map(({ url }, index) =>
+          <LightGalleryItem src={url} key={url} group={GALLERY_GROUP}>
             <AspectRatio ratio={1 / 1}>
               <Image
-                src={imageUrl}
+                src={url}
                 sx={{ objectFit: 'cover', height: '100%', width: '100%', cursor: 'pointer' }}
                 onClick={() => openGallery(GALLERY_GROUP, index)}
               />

@@ -10,5 +10,9 @@ export const theme: Theme = merge(baseTheme as Theme, {
     root: {
       height: '100%',
     }
+  },
+  fonts: {
+    body: 'serif',
+    heading: 'Junicode Condensed'
   }
 })

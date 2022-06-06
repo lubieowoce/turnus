@@ -19,7 +19,7 @@ import {
   useMatch,
   useNavigate,
 } from '@tanstack/react-location'
-import { usePlaces } from './api';
+import { usePlace, usePlaces } from './api';
 import { PlaceDetails } from './place-details';
 import { useGoBack } from './utils';
 
@@ -56,12 +56,12 @@ const Root = () => {
 
 const MainLayout = () => {
   const linksLeft = [
-    <Link to={'/miejscowosci'}>Miejscowości</Link>,
-    <Link to={'/mapa'}>Mapa</Link>,
-    <Link to={'/wystawy'}>Wystawy</Link>,
+    <Link style={fancyTextStyle} to={'/miejscowosci'}>Miejscowości</Link>,
+    <Link style={fancyTextStyle} to={'/mapa'}>Mapa</Link>,
+    <Link style={fancyTextStyle} to={'/wystawy'}>Wystawy</Link>,
   ]
   const linksRight = [
-    <Link to={'/info'}>Info</Link>
+    <Link style={fancyTextStyle} to={'/info'}>Info</Link>
   ]
   return (
     <div>
@@ -75,6 +75,11 @@ const MainLayout = () => {
   )
 }
 
+const fancyTextStyle = {
+  fontFamily: theme?.fonts?.['heading'],
+  fontSize: '1.66rem',
+}
+
 const PlacesIndex = () => {
   const places = usePlaces();
   return (
@@ -82,7 +87,7 @@ const PlacesIndex = () => {
       {places.isLoading && <Spinner />}
       {places.isSuccess && (
         Object.values(places.data.items).map((place) =>
-          <Link key={place.id} to={`/miejscowosci/${place.id}`}>
+          <Link style={fancyTextStyle} key={place.id} to={`/miejscowosci/${place.id}`}>
             <Box p='1em'>{place.name}</Box>
           </Link>
         )
@@ -94,14 +99,12 @@ const PlacesIndex = () => {
 const PlaceDetailsRoute = () => {
   const { params: { placeId } } = useMatch();
   useEffect(() => console.log('PlaceDetails', placeId), [placeId]);
-  const places = usePlaces();
+  // const places = usePlaces();
+  const place = usePlace({ id: placeId });
   return (
     <div style={{ padding: '1em', flexWrap: 'wrap' }}>
-      {places.data ? (
-        <PlaceDetails
-          placeId={placeId}
-          places={places.data.items}
-        />
+      {place.data ? (
+        <PlaceDetails place={place.data} />
       ) : <Spinner />}
     </div>
   )
