@@ -1,4 +1,4 @@
-import { createContext, memo, MutableRefObject, PropsWithChildren, useContext, useMemo } from "react";
+import { createContext, memo, MutableRefObject, PropsWithChildren, useContext, useEffect, useMemo } from "react";
 import { useBoundingclientrect as useBoundingClientRect } from 'rooks';
 
 
@@ -11,6 +11,9 @@ export const useLayoutCalculator = ({
 }): Dimensions => {
   const mainRect = useBoundingClientRect(mainRef);
   const headerRect = useBoundingClientRect(headerRef);
+  useEffect(() => {
+    console.log('useLayoutCalculator', mainRect, headerRect)
+  }, [mainRect, headerRect]);
   return useMemo(() => ({
     mainWidth: mainRect?.width ?? null,
     mainHeight: mainRect?.height ?? null,

@@ -51,8 +51,10 @@ export const PlaceDetails = memo(({
   );
 })
 
+const galleryGroupId = (imageSet: ImageSetType) => `gallery-group-${imageSet.id}`
+
 const ImageSetPreview = ({ imageSet }: { imageSet: ImageSetType }) => {
-  const GALLERY_GROUP = `gallery-group-${imageSet.id}`;
+  const GALLERY_GROUP = galleryGroupId(imageSet);
   const { openGallery } = useLightGallery();
   // if (!collection) {
   //   return (

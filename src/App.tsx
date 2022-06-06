@@ -23,6 +23,7 @@ import { usePlace, usePlaces } from './api';
 import { PlaceDetails } from './place-details';
 import { useGoBack } from './utils';
 import { LayoutContextProvider, useLayoutCalculator } from './support/layout-context';
+import { CenterSpinner } from './support/center-spinner';
 
 
 const Root = () => {
@@ -74,7 +75,7 @@ const MainLayout = () => {
         <div style={{ flex: '1 auto' }} />
         {linksRight.map((el) => <Box key={el.props.to} p='1em'>{el}</Box>)}
       </Flex>
-      <Box sx={{ flex: '1 auto', outline: '1px solid blue', backgroundColor: 'aliceblue' }}>
+      <Box sx={{ flex: '1 auto' }}>
         <LayoutContextProvider dimensions={dimensions}>
           <Outlet />
         </LayoutContextProvider>
@@ -91,7 +92,7 @@ const fancyTextStyle = {
 const PlacesIndex = () => {
   const places = usePlaces();
   return (
-    <Flex style={{ padding: '1em', flexWrap: 'wrap'}}>
+    <Flex style={{ padding: '1em', flexWrap: 'wrap' }}>
       {places.isLoading && <Spinner />}
       {places.isSuccess && (
         Object.values(places.data.items).map((place) =>
@@ -108,11 +109,13 @@ const PlaceDetailsRoute = () => {
   const { params: { placeId } } = useMatch();
   const place = usePlace({ id: placeId });
   return (
-    <div style={{ padding: '1em', flexWrap: 'wrap' }}>
-      {place.data ? (
+    place.isSuccess ? (
+      <div style={{ padding: '1em', flexWrap: 'wrap' }}>
         <PlaceDetails place={place.data} />
-      ) : <Spinner />}
-    </div>
+      </div>
+    ) : (
+      <CenterSpinner />
+    )
   )
 }
 

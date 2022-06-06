@@ -12,7 +12,6 @@ import {
 import { useTheme } from '@emotion/react';
 
 import { Place, PlaceId, usePlaces, Geography as GeographyType, useMapGeography } from "./api";
-import { useBoundingclientrect as useBoundingClientRect } from 'rooks';
 import { useDimensions } from "./support/layout-context";
 
 
@@ -20,10 +19,25 @@ import { useDimensions } from "./support/layout-context";
 export const MapView = ({ selectedId, setSelectedId }) => {
   const places = usePlaces();
   const geography = useMapGeography();
-  const { mainWidth: width, mainHeight, headerHeight } = useDimensions();
-  const height = (mainHeight !== null && headerHeight !== null) ? mainHeight - headerHeight : null;
+  
+  const dimensions = useDimensions();
+  const { mainWidth: width, mainHeight, headerHeight } = dimensions
+  const height = (mainHeight !== null && headerHeight !== null) ? Math.floor(mainHeight - headerHeight) : null;
+
+  const headerHeightRounded = headerHeight !== null ? Math.ceil(headerHeight) : null;
+  // The dimension calculations don't come out exactly, so add an extra maxHeight
+  // to make sure we don't overflow
+  const style = useMemo(() => (
+    headerHeightRounded !== null ? {
+      maxHeight: `calc(100vh - ${headerHeightRounded}px)`,
+    } : {}
+  ), [headerHeightRounded]);
+
+  useEffect(() => {
+    console.log('dimensions', { width, height }, dimensions)
+  }, [width, height, dimensions]);
   return (
-    <Box sx={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+    <Box style={style} sx={{ width: '100%', height: '100%', overflow: 'hidden' }}>
       {(geography.isSuccess && width && height) ?
         <Map
           width={width}
