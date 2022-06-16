@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Flex,
@@ -19,11 +19,13 @@ import {
   useMatch,
   useNavigate,
 } from '@tanstack/react-location'
-import { usePlace, usePlaces } from './api';
+import { useImageSet, usePlace, usePlaces } from './api';
 import { PlaceDetails } from './place-details';
 import { useGoBack } from './utils';
 import { LayoutContextProvider, useLayoutCalculator } from './support/layout-context';
 import { CenterSpinner } from './support/center-spinner';
+import { ImageSetDetails } from './image-set';
+import { DefaultErrorBoundary, ErrorFallback } from './support/error-fallback';
 
 
 const Root = () => {
@@ -55,6 +57,10 @@ const Root = () => {
   );
 }
 
+const fancyTextStyle = {
+  fontFamily: theme?.fonts?.['heading'],
+  fontSize: '1.66rem',
+}
 
 const MainLayout = () => {
   const linksLeft = [
@@ -67,51 +73,75 @@ const MainLayout = () => {
   ];
   const mainRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const dimensions = useLayoutCalculator({ mainRef, headerRef });
+  const dimensions = { mainWidth: null, mainHeight: null, headerHeight: null }
+  // const dimensions = useLayoutCalculator({ mainRef, headerRef });
   return (
-    <main ref={mainRef} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-      <Flex ref={headerRef} sx={{ flex: 'none' }}>
-        {linksLeft.map((el) => <Box key={el.props.to} p='1em'>{el}</Box>)}
+    <div ref={mainRef} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+      <Flex as='nav' ref={headerRef} sx={{ flex: 'none' }}>
+        <Flex p='1em' sx={{ gap: '7ch' }}>
+          {linksLeft.map((el) => <Box key={el.props.to}>{el}</Box>)}
+        </Flex>
         <div style={{ flex: '1 auto' }} />
         {linksRight.map((el) => <Box key={el.props.to} p='1em'>{el}</Box>)}
       </Flex>
-      <Box sx={{ flex: '1 auto' }}>
+      <main style={{ flex: '1 auto' }}>
         <LayoutContextProvider dimensions={dimensions}>
           <Outlet />
         </LayoutContextProvider>
-      </Box>
-    </main>
+      </main>
+    </div>
   )
-}
-
-const fancyTextStyle = {
-  fontFamily: theme?.fonts?.['heading'],
-  fontSize: '1.66rem',
 }
 
 const PlacesIndex = () => {
   const places = usePlaces();
+  const background = `${process.env.PUBLIC_URL}/assets/dots-sparse.svg`;
   return (
-    <Flex style={{ padding: '1em', flexWrap: 'wrap' }}>
-      {places.isLoading && <Spinner />}
-      {places.isSuccess && (
-        Object.values(places.data.items).map((place) =>
-          <Link style={fancyTextStyle} key={place.id} to={`/miejscowosci/${place.id}`}>
-            <Box p='1em'>{place.name}</Box>
-          </Link>
-        )
-      )}
-    </Flex>
+    <Box sx={{ height: '100%', backgroundImage: `url(${background})`, backgroundPosition: 'center' }}>
+      <Flex sx={{ padding: '1em', flexWrap: 'wrap', flexDirection: ['column', 'row'] }}>
+        {places.isLoading && <Spinner />}
+        {places.isSuccess && (
+          Object.values(places.data.items).map((place, index, arr) => {
+            const isLast = index === arr.length - 1;
+            return (
+              <Box key={place.id}>
+                <Link style={fancyTextStyle} to={`/miejscowosci/${place.id}`}>
+                  {place.name}
+                </Link>
+                {!isLast && <span style={fancyTextStyle}>{','}&nbsp;</span>}
+              </Box>
+            )
+          })
+        )}
+      </Flex>
+    </Box>
   )
 }
 
 const PlaceDetailsRoute = () => {
   const { params: { placeId } } = useMatch();
   const place = usePlace({ id: placeId });
+  useEffect(() => { console.log('PlaceDetailsRoute', { placeId })}, [placeId]);
   return (
     place.isSuccess ? (
       <div style={{ padding: '1em', flexWrap: 'wrap' }}>
         <PlaceDetails place={place.data} />
+      </div>
+    ) : (
+      <CenterSpinner />
+    )
+  )
+}
+
+const ImageSetDetailsRoute = () => {
+  const { params: { placeId, imageSetId } } = useMatch();
+  useEffect(() => { console.log('ImageSetDetailsRoute', { placeId, imageSetId }) }, [placeId, imageSetId]);
+
+  const imageSet = useImageSet({ placeId, imageSetId });
+  return (
+    imageSet.isSuccess ? (
+      <div style={{ padding: '1em', flexWrap: 'wrap' }}>
+        <ImageSetDetails imageSet={imageSet.data} />
       </div>
     ) : (
       <CenterSpinner />
@@ -133,6 +163,13 @@ const MapRoute = () => {
   return <MapView selectedId={placeId} setSelectedId={goToPlace} />
 }
 
+const ErrorWrapper = () => {
+  return (
+    <DefaultErrorBoundary>
+      <Outlet />
+    </DefaultErrorBoundary>
+  )
+}
 
 const routes: Route[] = [
   {
@@ -141,6 +178,7 @@ const routes: Route[] = [
     children: [
       {
         path: 'miejscowosci',
+        element: <ErrorWrapper />,
         children: [
           {
             path: '/',
@@ -148,7 +186,19 @@ const routes: Route[] = [
           },
           {
             path: ':placeId',
-            element: <PlaceDetailsRoute />,
+            element: <ErrorWrapper />,
+            children: [
+              {
+                path: '/',
+                element: <PlaceDetailsRoute />,
+                errorElement: <ErrorFallback />
+              },
+              {
+                path: ':imageSetId',
+                element: <ImageSetDetailsRoute />,
+                errorElement: <ErrorFallback />,
+              },
+            ]
           },
         ]
       },

@@ -86,7 +86,7 @@ export const Map = memo(({
   }), [theme]);
   const sizes = {
     marker: '8'
-  } 
+  }
   return (
     <ComposableMap
       projection="geoMercator"
@@ -131,7 +131,7 @@ export const Map = memo(({
                   {index + 1}
                 </text> */}
               </g>
-              <text y={-12} style={{ fontSize: '12pt', fontFamily: 'Arial', userSelect: 'none' }} textAnchor="middle" fill="#333">
+              <text y={-12} style={{ fontSize: '12pt', fontFamily: 'serif', userSelect: 'none' }} textAnchor="middle" fill="#333">
                 {name}
               </text>
             </Marker>

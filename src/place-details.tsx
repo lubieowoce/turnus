@@ -4,24 +4,16 @@ import {
   Box,
   Heading,
   Paragraph,
-  Divider,
   Flex,
   Close,
-  Spinner,
   Image,
   AspectRatio,
   Text,
 } from 'theme-ui';
 
-import {
-  LightgalleryProvider as LightGalleryProvider,
-  LightgalleryItem as LightGalleryItem,
-  useLightgallery as useLightGallery
-} from "react-lightgallery";
-import "lightgallery.js/dist/css/lightgallery.css";
-
 import { ImageSet as ImageSetType, PlaceDetails as PlaceDetailsType } from "./api";
 import { useGoBack } from './utils';
+import { Link } from '@tanstack/react-location';
 
 export const PlaceDetails = memo(({
   place,
@@ -29,62 +21,54 @@ export const PlaceDetails = memo(({
   place: PlaceDetailsType,
 }) => {
   const close = useGoBack();
-  const imageSet = Object.values(place.imageSets)[0] ?? null
   return (
     <>
-      <Flex>
+      <Flex mb='3em'>
         <Heading as='h1' sx={{ flex: '1 1 auto' }}>
           {place.name}
         </Heading>
         <CloseButton onClick={close} />
       </Flex>
-      {imageSet &&
-        <Box>
-          <Box sx={{ fontFamily: 'body' }} dangerouslySetInnerHTML={{ __html: place.description }} />
-          <Divider />
-          <LightGalleryProvider>
-            <ImageSetPreview imageSet={imageSet} />
-          </LightGalleryProvider>
-        </Box>
-      }
+      <Box sx={{ marginRight: '-1em' }}>
+        {Object.entries(place.imageSets).map(([id, imageSetSummary]) => 
+          <ImageSetSummary key={id} imageSet={imageSetSummary} />
+        )}
+      </Box>
     </>
   );
 })
 
-const galleryGroupId = (imageSet: ImageSetType) => `gallery-group-${imageSet.id}`
-
-const ImageSetPreview = ({ imageSet }: { imageSet: ImageSetType }) => {
-  const GALLERY_GROUP = galleryGroupId(imageSet);
-  const { openGallery } = useLightGallery();
-  // if (!collection) {
-  //   return (
-  //     <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-  //       <Spinner />
-  //     </Box>
-  //   )
-  // }
+const ImageSetSummary = ({ imageSet }: { imageSet: ImageSetType }) => {
+  const imageHeight = 20
+  const imageWidth = (4/3) * imageHeight;
   return (
-    <Box>
-      <Paragraph mb="1em">{imageSet.summary}</Paragraph>
-      <Box sx={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: '10px 10px',
-        pb: '3',
-      }}>
-        {Object.values(imageSet.media).map(({ url }, index) =>
-          <LightGalleryItem src={url} key={url} group={GALLERY_GROUP}>
-            <AspectRatio ratio={1 / 1}>
-              <Image
-                src={url}
-                sx={{ objectFit: 'cover', height: '100%', width: '100%', cursor: 'pointer' }}
-                onClick={() => openGallery(GALLERY_GROUP, index)}
-              />
-            </AspectRatio>
-          </LightGalleryItem>
+    <Flex sx={{ width: '100%', maxWidth: '100%', height: `${imageHeight}em` }}>
+      <Link to={`./${imageSet.id}`} style={{ display: 'block', flex: '0 0 40ch', textDecoration: 'none  ' }}>
+        <Box>
+          <Heading as='h2'>{imageSet.title}</Heading>
+          <Heading as='h3'>{imageSet.author}</Heading>
+          <br />
+          <Paragraph sx={{ fontFamily: 'heading' }}>{imageSet.summary}</Paragraph>
+        </Box>
+      </Link>
+      <Flex sx={{ overflowY: 'auto', gap: '1em', flex: '1 auto' }}>
+        {Object.values(imageSet.media).map(({ url, meta }, index) =>
+          // <AspectRatio ratio={4 / 3} sx={{ outline: '1px solid darkgreen', flex: 'none' }}>
+            <Image
+              src={url}
+              sx={{
+                objectFit: 'cover',
+                width: `${imageWidth}em`,
+                height: `${imageHeight}em`,
+                cursor: 'pointer',
+                flex: 'none',
+                backgroundColor: 'lightgray'
+              }}
+            />
+          // </AspectRatio>
         )}
-      </Box>
-    </Box>
+      </Flex>
+    </Flex>
   )
 }
 
