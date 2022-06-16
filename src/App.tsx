@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Flex,
@@ -22,10 +22,10 @@ import {
 import { useImageSet, usePlace, usePlaces } from './api';
 import { PlaceDetails } from './place-details';
 import { useGoBack } from './utils';
-import { LayoutContextProvider, useLayoutCalculator } from './support/layout-context';
 import { CenterSpinner } from './support/center-spinner';
 import { ImageSetDetails } from './image-set';
 import { DefaultErrorBoundary, ErrorFallback } from './support/error-fallback';
+import { HEADER_HEIGHT, PADDING_BODY } from './config';
 
 
 const Root = () => {
@@ -71,23 +71,17 @@ const MainLayout = () => {
   const linksRight = [
     <Link style={fancyTextStyle} to={'/info'}>Info</Link>
   ];
-  const mainRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const dimensions = { mainWidth: null, mainHeight: null, headerHeight: null }
-  // const dimensions = useLayoutCalculator({ mainRef, headerRef });
   return (
-    <div ref={mainRef} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-      <Flex as='nav' ref={headerRef} sx={{ flex: 'none' }}>
-        <Flex p='1em' sx={{ gap: '7ch' }}>
+    <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+      <Flex as='nav' sx={{ flex: `0 0 ${HEADER_HEIGHT}` }}>
+        <Flex py='1em' px={PADDING_BODY.horizontal} sx={{ gap: '7ch' }}>
           {linksLeft.map((el) => <Box key={el.props.to}>{el}</Box>)}
         </Flex>
         <div style={{ flex: '1 auto' }} />
-        {linksRight.map((el) => <Box key={el.props.to} p='1em'>{el}</Box>)}
+        {linksRight.map((el) => <Box key={el.props.to} py='1em' px={PADDING_BODY.horizontal}>{el}</Box>)}
       </Flex>
       <main style={{ flex: '1 auto' }}>
-        <LayoutContextProvider dimensions={dimensions}>
-          <Outlet />
-        </LayoutContextProvider>
+        <Outlet />
       </main>
     </div>
   )
@@ -98,7 +92,7 @@ const PlacesIndex = () => {
   const background = `${process.env.PUBLIC_URL}/assets/dots-sparse.svg`;
   return (
     <Box sx={{ height: '100%', backgroundImage: `url(${background})`, backgroundPosition: 'center' }}>
-      <Flex sx={{ padding: '1em', flexWrap: 'wrap', flexDirection: ['column', 'row'] }}>
+      <Flex py='1em' px={PADDING_BODY.horizontal} sx={{ flexWrap: 'wrap', flexDirection: ['column', 'row'] }}>
         {places.isLoading && <Spinner />}
         {places.isSuccess && (
           Object.values(places.data.items).map((place, index, arr) => {
@@ -124,9 +118,7 @@ const PlaceDetailsRoute = () => {
   useEffect(() => { console.log('PlaceDetailsRoute', { placeId })}, [placeId]);
   return (
     place.isSuccess ? (
-      <div style={{ padding: '1em', flexWrap: 'wrap' }}>
-        <PlaceDetails place={place.data} />
-      </div>
+      <PlaceDetails place={place.data} />
     ) : (
       <CenterSpinner />
     )
@@ -140,9 +132,9 @@ const ImageSetDetailsRoute = () => {
   const imageSet = useImageSet({ placeId, imageSetId });
   return (
     imageSet.isSuccess ? (
-      <div style={{ padding: '1em', flexWrap: 'wrap' }}>
+      <Box py='1em' px={PADDING_BODY.horizontal} sx={{ flexWrap: 'wrap' }}>
         <ImageSetDetails imageSet={imageSet.data} />
-      </div>
+      </Box>
     ) : (
       <CenterSpinner />
     )

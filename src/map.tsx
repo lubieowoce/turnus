@@ -5,39 +5,37 @@ import {
   Marker,
   ZoomableGroup
 } from "react-simple-maps";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, RefCallback, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Box, Container, Spinner,
 } from 'theme-ui';
-import { useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 
 import { Place, PlaceId, usePlaces, Geography as GeographyType, useMapGeography } from "./api";
-import { useDimensions } from "./support/layout-context";
+import { useDebounce, useOnWindowResize } from "rooks";
+import { HEADER_HEIGHT } from "./config";
+import { debounce } from "lodash";
 
 
 
 export const MapView = ({ selectedId, setSelectedId }) => {
   const places = usePlaces();
   const geography = useMapGeography();
+  useFullscreenBody();
 
-  const dimensions = useDimensions();
-  const { mainWidth: width, mainHeight, headerHeight } = dimensions
-  const height = (mainHeight !== null && headerHeight !== null) ? Math.floor(mainHeight - headerHeight) : null;
+  const [size, containerRef] = useSize();
+  
+  const { width = null, height = null } = size || {}
 
-  const headerHeightRounded = headerHeight !== null ? Math.ceil(headerHeight) : null;
-  // The dimension calculations don't come out exactly, so add an extra maxHeight
-  // to make sure we don't overflow
-  const style = useMemo(() => (
-    headerHeightRounded !== null ? {
-      maxHeight: `calc(100vh - ${headerHeightRounded}px)`,
-    } : {}
-  ), [headerHeightRounded]);
+  const style = useMemo(() => ({
+    maxHeight: `calc(100vh - ${HEADER_HEIGHT})`,
+  }), []);
 
   useEffect(() => {
-    console.log('dimensions', { width, height }, dimensions)
-  }, [width, height, dimensions]);
+    console.log('dimensions', { width, height });
+  }, [width, height]);
   return (
-    <Box style={style} sx={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+    <Box ref={containerRef} style={style} sx={{ width: '100%', height: '100%', overflow: 'hidden' }}>
       {(geography.isSuccess && width && height) ?
         <Map
           width={width}
@@ -54,6 +52,49 @@ export const MapView = ({ selectedId, setSelectedId }) => {
       }
     </Box>
   );
+}
+
+type ElementSize = { width: number, height: number }
+
+const getSize = (element: HTMLElement): ElementSize => {
+  const { width, height } = element.getBoundingClientRect();
+  return { width, height }
+}
+
+const useSize = (): [size: ElementSize | null, ref: RefCallback<HTMLElement>] => {
+  const [size, setSize] = useState<ElementSize | null>(null);
+  const elementRef = useRef<HTMLElement | null>(null);
+
+  const callbackRef = useCallback((element: HTMLElement) => {
+    elementRef.current = element;
+    if (element) {
+      setSize(getSize(element));
+    } else {
+      setSize(null);
+    }
+  }, []);
+
+  const onResize = useDebounce(() => {
+    setSize(elementRef.current ? getSize(elementRef.current) : null);
+  }, 100);
+
+  useOnWindowResize(onResize);
+
+  return [size, callbackRef]
+}
+
+const fullscreenClass = css`
+  height: 100vh;
+  overflow: hidden;
+`
+
+const useFullscreenBody = () => {
+  useLayoutEffect(() => {
+    document.body.classList.add(fullscreenClass.name)
+    return () => {
+      document.body.classList.remove(fullscreenClass.name)
+    }
+  }, []);
 }
 
 type Point = [lon: number, lat: number]
@@ -74,7 +115,6 @@ export const Map = memo(({
   places: Record<PlaceId, Place> | undefined,
   geography: GeographyType,
 }) => {
-  const theme: any = useTheme();
   useEffect(() => {
     console.log('Map', { width, height })
   }, [width, height])
@@ -83,7 +123,7 @@ export const Map = memo(({
     selected: 'black',
     mapFill: 'rgb(194, 231, 254)',
     mapOutline: 'rgb(179, 216, 238)',
-  }), [theme]);
+  }), []);
   const sizes = {
     marker: '8'
   }
