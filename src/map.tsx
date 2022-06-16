@@ -19,7 +19,7 @@ import { useDimensions } from "./support/layout-context";
 export const MapView = ({ selectedId, setSelectedId }) => {
   const places = usePlaces();
   const geography = useMapGeography();
-  
+
   const dimensions = useDimensions();
   const { mainWidth: width, mainHeight, headerHeight } = dimensions
   const height = (mainHeight !== null && headerHeight !== null) ? Math.floor(mainHeight - headerHeight) : null;
@@ -79,12 +79,13 @@ export const Map = memo(({
     console.log('Map', { width, height })
   }, [width, height])
   const colors = useMemo(() => ({
-    default: theme.colors.cyanDark,
-    selected: theme.colors.cyanLight,
+    default: 'black',
+    selected: 'black',
     mapFill: 'rgb(194, 231, 254)',
+    mapOutline: 'rgb(179, 216, 238)',
   }), [theme]);
   const sizes = {
-    marker: '10'
+    marker: '8'
   } 
   return (
     <ComposableMap
@@ -103,23 +104,11 @@ export const Map = memo(({
               key={geo.rsmKey}
               geography={geo}
               fill={colors.mapFill}
-              stroke="black"
+              stroke={colors.mapOutline}
               strokeWidth="1"
             />
           )), [])}
         </Geographies>
-        <Marker coordinates={MAP_CENTER}>
-          <g
-            style={{ cursor: 'pointer', userSelect: 'none' }}
-          >
-            <circle
-              r={sizes.marker}
-              fill={'tomato'}
-              stroke="#fff"
-              strokeWidth={0.25}
-            />
-          </g>
-        </Marker>
         {useMemo(() => (
           places && Object.values(places).map(
             ({ id, coordinates: { lat, lon }, name }, index) => <Marker key={id} coordinates={[lon, lat]}>
@@ -133,16 +122,16 @@ export const Map = memo(({
                   stroke="#fff"
                   strokeWidth={0.25}
                 />
-                <text
-                  style={{ fontSize: '1pt', fontWeight: id === selectedId ? 'bold' : 'normal' }}
+                {/* <text
+                  style={{ fontSize: '12pt', fontFamily: 'Arial', fontWeight: id === selectedId ? 'bold' : 'normal' }}
                   textAnchor="middle"
                   dominantBaseline="central"
                   fill="#333"
                 >
                   {index + 1}
-                </text>
+                </text> */}
               </g>
-              <text y={-2.5} style={{ fontSize: '1pt', userSelect: 'none' }} textAnchor="middle" fill="#333">
+              <text y={-12} style={{ fontSize: '12pt', fontFamily: 'Arial', userSelect: 'none' }} textAnchor="middle" fill="#333">
                 {name}
               </text>
             </Marker>
