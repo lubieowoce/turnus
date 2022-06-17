@@ -57,7 +57,7 @@ const ImageSetSummary = ({ imageSet }: { imageSet: ImageSetType }) => {
         </Box>
       </Link>
       <Spacer />
-      <Flex sx={{ overflowY: 'auto', gap: '1em', flex: '1 auto' }}>
+      <Flex sx={{ overflowY: 'clip', overflowX: 'auto', gap: '1em', flex: '1 auto' }}>
         {Object.values(imageSet.media).map(({ url }) =>
           <Link key={url} to={`./${imageSet.id}`} style={{ flex: 'none' }}>
             <Image

@@ -19,21 +19,21 @@ export const ImageSetDetails = memo(({
   imageSet: ImageSetDetailsType,
 }) => {
   return (
-    <Container>
+    <Box>
       <Heading as='h1' sx={{ flex: '1 1 auto' }}>
         {imageSet.title}
       </Heading>
       <Heading as='h3' sx={{ flex: '1 1 auto' }}>
         {imageSet.author}
       </Heading>
-      <Box>
+      <Box sx={{ maxWidth: ['100%', 'small'] }}>
         <Box
           sx={{ fontFamily: 'body' }}
           dangerouslySetInnerHTML={{ __html: imageSet.content }}
         />
         <ImageSetGallery imageSet={imageSet} />
       </Box>
-    </Container>
+    </Box>
   );
 })
 

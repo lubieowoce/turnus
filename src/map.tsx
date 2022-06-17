@@ -14,6 +14,7 @@ import { css } from '@emotion/react';
 import { Place, PlaceId, usePlaces, Geography as GeographyType, useMapGeography } from "./api";
 import { useDebounce, useOnWindowResize } from "rooks";
 import { HEADER_HEIGHT } from "./config";
+import { CenterSpinner } from "./support/center-spinner";
 
 
 
@@ -45,9 +46,7 @@ export const MapView = ({ selectedId, setSelectedId }) => {
           geography={geography.data}
         />
         :
-        <Container>
-          <Spinner />
-        </Container>
+        <CenterSpinner />
       }
     </Box>
   );
