@@ -1,5 +1,4 @@
-import { useQuery } from 'react-query';
-import { memo, useCallback, useMemo } from 'react';
+import { memo } from 'react';
 import {
   Box,
   Heading,
@@ -7,7 +6,6 @@ import {
   Flex,
   Close,
   Image,
-  AspectRatio,
   Text,
 } from 'theme-ui';
 
@@ -22,6 +20,7 @@ export const PlaceDetails = memo(({
   place: PlaceDetailsType,
 }) => {
   const close = useGoBack();
+  const imageSets = Object.entries(place.imageSets);
   return (
     <>
       <Flex py='1em' px={PADDING_BODY.horizontal} mb='3em'>
@@ -31,7 +30,10 @@ export const PlaceDetails = memo(({
         <CloseButton onClick={close} />
       </Flex>
       <Box sx={{ paddingLeft: PADDING_BODY.horizontal }}>
-        {Object.entries(place.imageSets).map(([id, imageSetSummary]) => 
+        {!imageSets.length && (
+          <Text sx={{ fontStyle: 'italic' }}>{'Nie ma tu jeszcze żadnych prac.'}</Text>
+        )}
+        {imageSets.map(([id, imageSetSummary]) =>
           <ImageSetSummary key={id} imageSet={imageSetSummary} />
         )}
       </Box>
@@ -40,10 +42,12 @@ export const PlaceDetails = memo(({
 })
 
 const ImageSetSummary = ({ imageSet }: { imageSet: ImageSetType }) => {
-  const imageHeight = 20
-  const imageWidth = (4/3) * imageHeight;
+  const imageHeightEm = 20;
+  const imageWidthEm = (4/3) * imageHeightEm;
+  const imageHeight = `${imageHeightEm}em`;
+  const imageWidth = `${imageWidthEm}em`;
   return (
-    <Flex sx={{ width: '100%', maxWidth: '100%', height: `${imageHeight}em` }}>
+    <Flex sx={{ width: '100%', maxWidth: '100%', height: imageHeight }}>
       <Link to={`./${imageSet.id}`} style={{ display: 'block', flex: '0 0 40ch', textDecoration: 'none  ' }}>
         <Box>
           <Heading as='h2'>{imageSet.title}</Heading>
@@ -54,20 +58,18 @@ const ImageSetSummary = ({ imageSet }: { imageSet: ImageSetType }) => {
       </Link>
       <Spacer />
       <Flex sx={{ overflowY: 'auto', gap: '1em', flex: '1 auto' }}>
-        {Object.values(imageSet.media).map(({ url, meta }, index) =>
-          // <AspectRatio ratio={4 / 3} sx={{ outline: '1px solid darkgreen', flex: 'none' }}>
+        {Object.values(imageSet.media).map(({ url }) =>
+          <Link to={`./${imageSet.id}`} style={{ flex: 'none' }}>
             <Image
               src={url}
               sx={{
                 objectFit: 'cover',
-                width: `${imageWidth}em`,
-                height: `${imageHeight}em`,
-                cursor: 'pointer',
-                flex: 'none',
+                width: imageWidth,
+                height: imageHeight,
                 backgroundColor: 'lightgray'
               }}
             />
-          // </AspectRatio>
+          </Link>
         )}
         <Spacer />
       </Flex>

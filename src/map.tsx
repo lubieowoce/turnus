@@ -135,7 +135,7 @@ export const Map = memo(({
       }}
       width={width}
       height={height}
-      style={{ height: '100%', backgroundColor: 'rgba(0,0,0,0.025)' }}
+      style={{ height: '100%' }}
     >
       <ZoomableGroup /* zoom={8} minZoom={8} maxZoom={16} */ center={MAP_CENTER}>
         <Geographies geography={geography}>

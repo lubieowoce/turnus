@@ -72,8 +72,14 @@ const MainLayout = () => {
     <Link style={fancyTextStyle} to={'/info'}>Info</Link>
   ];
   return (
-    <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-      <Flex as='nav' sx={{ flex: `0 0 ${HEADER_HEIGHT}` }}>
+    <div style={{
+      height: '100%',
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'stretch',
+    }}>
+      <Flex as='nav' sx={{ flex: `0 0 ${HEADER_HEIGHT}`, backgroundColor: 'background' }}>
         <Flex py='1em' px={PADDING_BODY.horizontal} sx={{ gap: '7ch' }}>
           {linksLeft.map((el) => <Box key={el.props.to}>{el}</Box>)}
         </Flex>

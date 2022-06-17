@@ -16,6 +16,6 @@ export const theme: Theme = merge(baseTheme as Theme, {
     heading: 'Junicode Condensed'
   },
   colors: {
-    background: 'f3f2ef',
+    background: '#f3f2ef',
   }
 })
