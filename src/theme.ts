@@ -5,17 +5,21 @@ import {
 
 import baseTheme from 'theme-ui-preset-geist';
 
-export const theme: Theme = merge(baseTheme as Theme, {
+export const theme = merge(baseTheme as Theme, {
   styles: {
     root: {
       height: '100%',
     },
   },
   fonts: {
-    body: 'serif',
+    body: 'Arial',
     heading: 'Junicode Condensed'
   },
   colors: {
     background: '#f3f2ef',
+    backgroundYellow: 'rgb(255,253,112)',
+  },
+  sizes: {
+    'sidebar': 350,
   }
 })

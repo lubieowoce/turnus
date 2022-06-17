@@ -26,6 +26,8 @@ import { ImageSetDetails } from './image-set';
 import { DefaultErrorBoundary, ErrorFallback } from './support/error-fallback';
 import { fancyTextStyle, HEADER_HEIGHT, PADDING_BODY } from './config';
 import { PlaceList } from './place-list';
+import { DialogDisclosure, useDialogState } from 'reakit/Dialog';
+import { InfoPopup } from './info-popup';
 
 const Root = () => {
   const [queryClient] = useState(() =>
@@ -57,33 +59,40 @@ const Root = () => {
 }
 
 const MainLayout = () => {
+  const infoPopup = useDialogState();
+
   const linksLeft = [
     <Link style={fancyTextStyle} to={'/miejscowosci'}>Miejscowości</Link>,
     <Link style={fancyTextStyle} to={'/mapa'}>Mapa</Link>,
     <Link style={fancyTextStyle} to={'/wystawy'}>Wystawy</Link>,
   ]
   const linksRight = [
-    <Link style={fancyTextStyle} to={'/info'}>Info</Link>
+    <DialogDisclosure as="a" style={{...fancyTextStyle, cursor: 'pointer'}} {...infoPopup}>
+      Info
+    </DialogDisclosure>
   ];
   return (
-    <div style={{
-      height: '100%',
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'stretch',
-    }}>
-      <Flex as='nav' sx={{ flex: `0 0 ${HEADER_HEIGHT}`, backgroundColor: 'background' }}>
-        <Flex py='1em' px={PADDING_BODY.horizontal} sx={{ gap: '7ch' }}>
-          {linksLeft.map((el) => <Box key={el.props.to}>{el}</Box>)}
+    <>
+      <div style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+      }}>
+        <Flex as='nav' sx={{ flex: `0 0 ${HEADER_HEIGHT}`, backgroundColor: 'background' }}>
+          <Flex py='1em' px={PADDING_BODY.horizontal} sx={{ gap: '7ch' }}>
+            {linksLeft.map((el) => <Box key={el.props.to}>{el}</Box>)}
+          </Flex>
+          <div style={{ flex: '1 auto' }} />
+          {linksRight.map((el) => <Box key={el.props.to} py='1em' px={PADDING_BODY.horizontal}>{el}</Box>)}
         </Flex>
-        <div style={{ flex: '1 auto' }} />
-        {linksRight.map((el) => <Box key={el.props.to} py='1em' px={PADDING_BODY.horizontal}>{el}</Box>)}
-      </Flex>
-      <main style={{ flex: '1 auto' }}>
-        <Outlet />
-      </main>
-    </div>
+        <main style={{ flex: '1 auto' }}>
+          <Outlet />
+        </main>
+      </div>
+      <InfoPopup {...infoPopup} />
+    </>
   )
 }
 
@@ -188,10 +197,6 @@ const routes: Route[] = [
       {
         path: 'wystawy',
         element: <Heading>Wystawy</Heading>
-      },
-      {
-        path: 'info',
-        element: <Heading>Info</Heading>
       },
     ],
   }
