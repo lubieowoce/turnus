@@ -1,11 +1,10 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Box,
   Flex,
   Heading,
-  Spinner,
   ThemeProvider,
 } from 'theme-ui';
 import { MapView } from './map'
@@ -25,8 +24,8 @@ import { useGoBack } from './utils';
 import { CenterSpinner } from './support/center-spinner';
 import { ImageSetDetails } from './image-set';
 import { DefaultErrorBoundary, ErrorFallback } from './support/error-fallback';
-import { HEADER_HEIGHT, PADDING_BODY } from './config';
-
+import { fancyTextStyle, HEADER_HEIGHT, PADDING_BODY } from './config';
+import { PlaceList } from './place-list';
 
 const Root = () => {
   const [queryClient] = useState(() =>
@@ -55,11 +54,6 @@ const Root = () => {
       </ThemeProvider>
     </QueryClientProvider >
   );
-}
-
-const fancyTextStyle = {
-  fontFamily: theme?.fonts?.['heading'],
-  fontSize: '1.66rem',
 }
 
 const MainLayout = () => {
@@ -98,30 +92,19 @@ const PlacesIndex = () => {
   const background = `${process.env.PUBLIC_URL}/assets/dots-sparse.svg`;
   return (
     <Box sx={{ height: '100%', backgroundImage: `url(${background})`, backgroundPosition: 'center' }}>
-      <Flex py='1em' px={PADDING_BODY.horizontal} sx={{ flexWrap: 'wrap', flexDirection: ['column', 'row'] }}>
-        {places.isLoading && <Spinner />}
-        {places.isSuccess && (
-          Object.values(places.data.items).map((place, index, arr) => {
-            const isLast = index === arr.length - 1;
-            return (
-              <Box key={place.id}>
-                <Link style={fancyTextStyle} to={`/miejscowosci/${place.id}`}>
-                  {place.name}
-                </Link>
-                {!isLast && <span style={fancyTextStyle}>{','}&nbsp;</span>}
-              </Box>
-            )
-          })
-        )}
-      </Flex>
+      {places.isLoading && <CenterSpinner />}
+      {places.isSuccess && (
+        <PlaceList places={places.data} />
+      )}
     </Box>
   )
 }
 
+
+
 const PlaceDetailsRoute = () => {
   const { params: { placeId } } = useMatch();
   const place = usePlace({ id: placeId });
-  useEffect(() => { console.log('PlaceDetailsRoute', { placeId })}, [placeId]);
   return (
     place.isSuccess ? (
       <PlaceDetails place={place.data} />
@@ -133,8 +116,6 @@ const PlaceDetailsRoute = () => {
 
 const ImageSetDetailsRoute = () => {
   const { params: { placeId, imageSetId } } = useMatch();
-  useEffect(() => { console.log('ImageSetDetailsRoute', { placeId, imageSetId }) }, [placeId, imageSetId]);
-
   const imageSet = useImageSet({ placeId, imageSetId });
   return (
     imageSet.isSuccess ? (
