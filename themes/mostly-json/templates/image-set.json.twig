@@ -1,0 +1,10 @@
+{{
+    {
+        title: page.title,
+        author: page.header.author,
+        id: page.slug,
+        content: page.content,
+        media: page.media | map(m => { url: m.url, meta: m.meta }) | array,
+    }
+    | json_encode | raw
+}}

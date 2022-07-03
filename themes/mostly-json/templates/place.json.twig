@@ -3,7 +3,14 @@
         name: page.title,
         id: page.slug,
         description: page.summary(50) | striptags,
-        coordinates: page.header.coordinates
+        coordinates: page.header.coordinates,
+        imageSets: page.children | map (p => {
+            title: p.title,
+            author: p.header.author,
+            id: p.slug,
+            summary: p.summary(500) | striptags,
+            media: p.media | map(m => { url: m.url, meta: m.meta }),
+        }),
     }
     | json_encode | raw
 }}
