@@ -5,7 +5,8 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "http-proxy-middleware": "^2.0.6"
   },
   "scripts": {
     "start": "node src/index.js"
