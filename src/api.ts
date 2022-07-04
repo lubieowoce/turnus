@@ -1,8 +1,8 @@
 import { keyBy, sample } from "lodash"
 import { useQuery } from "react-query"
 
-const API_ROOT = 'http://localhost:3000'
-// const API_ROOT = 'https://localhost:8000'
+// const API_ROOT = 'http://localhost:3000'
+const API_ROOT = '/api'
 
 export type PlaceId = string;
 export type ImageSetId = string;
