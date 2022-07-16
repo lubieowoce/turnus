@@ -1,4 +1,7 @@
 absolute_urls: false
+custom_base_url: '/backend'
+session:
+  path: '/backend'
 
 home:
   alias: '/home'
