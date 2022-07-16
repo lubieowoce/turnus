@@ -4,12 +4,13 @@ home:
   alias: '/home'
 
 pages:
-  theme: quark
+  theme: mostly-json
   markdown:
     extra: false
   process:
     markdown: true
     twig: false
+  types: [html,htm,xml,txt,json,rss,atom,csv]
 
 cache:
   enabled: true
