@@ -32,7 +32,7 @@ COPY package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile --production=true
 
-COPY ./src ./src
+COPY ./build ./build
 COPY --from=frontend_builder /working/build /assets
 
-CMD [ "node", "src/index.js" ]
+CMD [ "yarn", "run", "start" ]

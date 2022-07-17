@@ -1,0 +1,19 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./build",
+    "skipLibCheck": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "theme-ui"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

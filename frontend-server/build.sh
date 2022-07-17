@@ -24,10 +24,9 @@ function make-context-tarball() {
     $FRONTEND_EXCLUDES \
     -s '|../frontend/|./frontend/|' \
     $FRONTEND_INCLUDES \
-    '.'
+    './Dockerfile' './build' './package.json' './yarn.lock'
 }
 
-# ctx=$(mktemp) && make-context-tarball > $ctx && tar -t -f $ctx && exit 0;
 
 make-context-tarball | docker build \
   "$@" \

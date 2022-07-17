@@ -1,4 +1,11 @@
-const proxyToBackend = (app, { backendHost, createProxyMiddleware }) =>
+import type { Express } from 'express';
+
+type Options = {
+  backendHost: string,
+  createProxyMiddleware: typeof import('http-proxy-middleware').createProxyMiddleware,
+}
+
+export const proxyToBackend = (app: Express, { backendHost, createProxyMiddleware }: Options) =>
   app.use(
     [
       '/api/',
@@ -9,9 +16,6 @@ const proxyToBackend = (app, { backendHost, createProxyMiddleware }) =>
       pathRewrite: {
         '^/api/': '/backend/api/',
       },
-      logger: console,
       logLevel: 'debug',
     })
   );
-
-  module.exports = { proxyToBackend }

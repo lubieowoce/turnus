@@ -1,12 +1,12 @@
-const express = require('express');
-const path = require('path');
-const { proxyToBackend } = require('./proxy');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+import express from 'express';
+import path from 'path';
+import { proxyToBackend } from './proxy';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const app = express();
 
 const ASSETS_DIR = process.env.ASSETS_DIR ?? '/assets';
-const PORT = process.env.PORT ?? 80;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 80;
 const HOST = process.env.HOST ?? '0.0.0.0';
 const BACKEND_HOST = process.env.BACKEND_HOST;
 if (!BACKEND_HOST) {
