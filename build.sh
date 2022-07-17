@@ -1,17 +1,9 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
-BUILD_JS="${BUILD_JS:-0}"
-if [ $BUILD_JS = 1 ]; then
-  pushd frontend/app
-  yarn run build
-  popd
-  pushd frontend/server
-  yarn run build
-  popd
-else
-  echo 'skipping JS build (enable with BUILD_JS=1)'
-fi
+pushd frontend
+yarn run build
+popd
 
 export DOCKER_BUILDKIT=1
 
