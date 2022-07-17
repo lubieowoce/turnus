@@ -1,5 +1,5 @@
 import { Flex } from "theme-ui";
-import { ErrorBoundary} from 'react-error-boundary'
+import { ErrorBoundary } from 'react-error-boundary'
 import { PropsWithChildren } from "react";
 
 export const DefaultErrorBoundary = ({ children }: PropsWithChildren<{}>) => {
