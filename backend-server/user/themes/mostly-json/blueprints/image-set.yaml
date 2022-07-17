@@ -1,0 +1,11 @@
+title: Image set
+'@extends':
+  type: default
+  context: blueprints://pages
+form:
+  fields:
+    header.author:
+      style: vertical
+      type: text
+      label: Author
+      placeholder: Ala Makota

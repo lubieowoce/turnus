@@ -1,0 +1,12 @@
+accounts/*
+!accounts/.*
+data/*
+!data/.*
+languages/*
+!languages/.*
+plugins/*
+!plugins/.*
+themes/*
+!themes/.*
+!themes/mostly-json/
+**/config/security.yaml

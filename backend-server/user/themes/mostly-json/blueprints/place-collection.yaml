@@ -1,0 +1,9 @@
+title: Place collection
+form:
+  fields:
+    description:
+      type: display
+      size: large
+      label: Warning
+      markdown: true
+      content: "Please don't try to edit this manually"
