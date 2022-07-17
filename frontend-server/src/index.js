@@ -1,7 +1,9 @@
 const express = require('express');
 const path = require('path');
-const app = express();
+const { proxyToBackend } = require('./proxy');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+
+const app = express();
 
 const ASSETS_DIR = process.env.ASSETS_DIR ?? '/assets';
 const PORT = process.env.PORT ?? 80;
@@ -13,20 +15,10 @@ if (!BACKEND_HOST) {
 
 app.use(express.static(ASSETS_DIR));
 
-app.use(
-  [
-    '/api/',
-    '/backend/',
-  ],
-  createProxyMiddleware({
-    target: `http://${BACKEND_HOST}/`,
-    pathRewrite: {
-      '^/api/': '/backend/api/',
-    },
-    logger: console,
-    logLevel: 'debug',
-  })
-);
+proxyToBackend(app, {
+  backendHost: BACKEND_HOST,
+  createProxyMiddleware,
+});
 
 app.get('/*', function (req, res) {
   res.sendFile(path.join(ASSETS_DIR, 'index.html'));
