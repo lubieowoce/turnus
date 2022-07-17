@@ -1,9 +1,8 @@
 import { ClassNames } from "@emotion/react";
-import { Box, Close, css as transformStyleObject, Flex, Heading, Link, ThemeUIStyleObject, useThemeUI } from 'theme-ui';
+import { Box, Close, Flex, Heading, ThemeUIStyleObject } from 'theme-ui';
 import { Dialog, DialogProps, DialogBackdrop } from "reakit/Dialog";
-import { Text } from 'theme-ui';
-import { useCallback } from "react";
 import { fancyTextStyle } from "./config";
+import { useApplyTheme } from "./support/use-apply-theme";
 
 const styles = {
   dialog: {
@@ -55,8 +54,3 @@ const Content = () => (<>
     </Box>
   </Flex>
 </>)
-
-const useApplyTheme = () => {
-  const theme = useThemeUI();
-  return useCallback((styles: ThemeUIStyleObject) => transformStyleObject(styles)(theme), [theme])
-}
