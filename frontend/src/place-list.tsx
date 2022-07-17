@@ -1,8 +1,7 @@
-import { ClassNames } from "@emotion/react";
-import { Link } from "@tanstack/react-location";
 import { Box, Flex } from "theme-ui";
 import { Places } from "./api";
 import { COLORS_ACCENT, fancyTextStyle, PADDING_BODY } from "./config";
+import { Link } from "./support/themed-link";
 
 export const PlaceList = ({ places }: { places: Places }) => {
   return (
@@ -11,22 +10,12 @@ export const PlaceList = ({ places }: { places: Places }) => {
         const isLast = index === arr.length - 1;
         return (
           <Box key={place.id}>
-            <ClassNames>{({ css }) => {
-              const coloredUnderline = css({
-                '&:hover': {
-                  textDecorationColor: randomAccentColor(index),
-                }
-              });
-              return (
-                <Link
-                  className={coloredUnderline}
-                  style={fancyTextStyle}
-                  to={`/miejscowosci/${place.id}`}
-                >
-                  {place.name}
-                </Link>
-              )
-            }}</ClassNames>
+            <Link
+              sx={{ textDecorationColor: `${randomAccentColor(index)} !important`, ...fancyTextStyle }}
+              to={`/miejscowosci/${place.id}`}
+            >
+              {place.name}
+            </Link>
             {!isLast && <span style={fancyTextStyle}>{','}&nbsp;</span>}
           </Box>
         )

@@ -10,7 +10,6 @@ import {
 import { MapView } from './map'
 import { theme } from './theme';
 import {
-  Link,
   Outlet,
   ReactLocation,
   Route,
@@ -28,6 +27,7 @@ import { fancyTextStyle, HEADER_HEIGHT, PADDING_BODY } from './config';
 import { PlaceList } from './place-list';
 import { DialogDisclosure, useDialogState } from 'reakit/Dialog';
 import { InfoPopup } from './info-popup';
+import { Link } from './support/themed-link';
 
 const Root = () => {
   const [queryClient] = useState(() =>
@@ -62,9 +62,9 @@ const MainLayout = () => {
   const infoPopup = useDialogState();
 
   const linksLeft = [
-    <Link style={fancyTextStyle} to={'/miejscowosci'}>Miejscowości</Link>,
-    <Link style={fancyTextStyle} to={'/mapa'}>Mapa</Link>,
-    <Link style={fancyTextStyle} to={'/wystawy'}>Wystawy</Link>,
+    <Link sx={fancyTextStyle} to={'/miejscowosci'}>Miejscowości</Link>,
+    <Link sx={fancyTextStyle} to={'/mapa'}>Mapa</Link>,
+    <Link sx={fancyTextStyle} to={'/wystawy'}>Wystawy</Link>,
   ]
   const linksRight = [
     <DialogDisclosure as="a" style={{...fancyTextStyle, cursor: 'pointer'}} {...infoPopup}>

@@ -11,8 +11,8 @@ import {
 
 import { ImageSet as ImageSetType, PlaceDetails as PlaceDetailsType } from "./api";
 import { useGoBack } from './utils';
-import { Link } from '@tanstack/react-location';
 import { PADDING_BODY } from './config';
+import { Link } from './support/themed-link';
 
 export const PlaceDetails = memo(({
   place,
@@ -50,18 +50,18 @@ const ImageSetSummary = ({ imageSet }: { imageSet: ImageSetType }) => {
   const imageWidth = `${imageWidthEm}em`;
   return (
     <Flex sx={{ width: '100%', maxWidth: '100%', height: imageHeight }}>
-      <Link to={`./${imageSet.id}`} style={{ display: 'block', flex: '0 0 40ch', textDecoration: 'none  ' }}>
+      <Link variant='reset' to={`./${imageSet.id}`} sx={{ display: 'block', flex: '0 0 40ch' }}>
         <Box>
           <Heading as='h2'>{imageSet.title}</Heading>
           <Heading as='h3'>{imageSet.author}</Heading>
           <br />
-          <Paragraph sx={{ fontFamily: 'heading' }}>{imageSet.summary}</Paragraph>
+          <Paragraph sx={{ fontSize: 0 }}>{imageSet.summary}</Paragraph>
         </Box>
       </Link>
       <Spacer />
       <Flex sx={{ overflowY: 'clip', overflowX: 'auto', gap: '1em', flex: '1 auto' }}>
         {Object.values(imageSet.media).map(({ url }) =>
-          <Link key={url} to={`./${imageSet.id}`} style={{ flex: 'none' }}>
+          <Link variant='reset' key={url} to={`./${imageSet.id}`} sx={{ flex: 'none' }}>
             <Image
               src={url}
               sx={{

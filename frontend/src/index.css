@@ -5,6 +5,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*
 a {
   text-decoration: none;
 }
@@ -15,6 +16,7 @@ a:hover {
   text-decoration: underline;
   text-decoration-thickness: 2px;
 }
+*/
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
