@@ -4,7 +4,7 @@ import { useApplyTheme } from './use-apply-theme';
 import { ThemeUIStyleObject } from 'theme-ui';
 
 const base = {
-  color: 'black',
+  color: 'text',
   textDecoration: 'none',
 } as ThemeUIStyleObject
 
