@@ -1,0 +1,21 @@
+version: '3'
+services:
+  'frontend-server':
+    image: 'skadinad/frontend-server'
+    ports:
+      - '9000:80'
+    depends_on:
+      - 'backend'
+    environment:
+      BACKEND_HOST: 'backend' # http://backend/...
+  'backend':
+    image: 'skadinad/backend-server'
+    expose:
+      - '80'
+    environment:
+      DUID: '1000'
+      DGID: '1000'
+    volumes:
+      - 'grav-data:/var/www/grav/user'
+volumes:
+  'grav-data':
