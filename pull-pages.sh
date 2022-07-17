@@ -8,8 +8,4 @@ SERVER_GROUP='xyz'
 
 export DOCKER_CONTEXT='skadinad-vps'
 
-docker cp "$LOCAL_PAGES_DIR/places" "$CONTAINER_NAME:$REMOTE_PAGES_DIR"
-docker exec "$CONTAINER_NAME" /bin/sh -c "
-chown -R $SERVER_USER $REMOTE_PAGES_DIR
-chgrp -R $SERVER_GROUP $REMOTE_PAGES_DIR
-"
+docker cp -a "$CONTAINER_NAME:$REMOTE_PAGES_DIR/places" "$LOCAL_PAGES_DIR"
