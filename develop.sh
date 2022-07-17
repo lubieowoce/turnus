@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -eu -o pipefail;
 
+BACKEND_PORT=8000
+
 export DOCKER_BUILDKIT=1
 
 function realpath() {
@@ -14,7 +16,7 @@ if [ $RUNNING = 0 ]; then
   docker build 'backend-server/' --tag 'skadinad/backend-server'
   docker run -d \
     -v "$(realpath ./dev-pages):/var/www/grav/user/pages" \
-    -p '8000:80' \
+    -p "$BACKEND_PORT:80" \
     'skadinad/backend-server'
 else
   echo 'Backend server already running'
@@ -22,4 +24,4 @@ else
 fi
 
 cd frontend/
-yarn run start
+BACKEND_HOST="localhost:$BACKEND_PORT" yarn run start

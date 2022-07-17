@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import { proxyToBackend } from './proxy';
-import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const app = express();
 
@@ -15,10 +14,7 @@ if (!BACKEND_HOST) {
 
 app.use(express.static(ASSETS_DIR));
 
-proxyToBackend(app, {
-  backendHost: BACKEND_HOST,
-  createProxyMiddleware,
-});
+proxyToBackend(app, { backendHost: BACKEND_HOST });
 
 app.get('/*', function (req, res) {
   res.sendFile(path.join(ASSETS_DIR, 'index.html'));

@@ -1,11 +1,11 @@
 import type { Express } from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 type Options = {
   backendHost: string,
-  createProxyMiddleware: typeof import('http-proxy-middleware').createProxyMiddleware,
 }
 
-export const proxyToBackend = (app: Express, { backendHost, createProxyMiddleware }: Options) =>
+export const proxyToBackend = (app: Express, { backendHost }: Options) =>
   app.use(
     [
       '/api/',
