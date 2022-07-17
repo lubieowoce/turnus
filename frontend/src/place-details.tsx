@@ -22,7 +22,7 @@ export const PlaceDetails = memo(({
   const close = useGoBack();
   const imageSets = Object.entries(place.imageSets);
   return (
-    <>
+    <Box sx={{ marginBottom: '2em' }}>
       <Flex py='1em' px={PADDING_BODY.horizontal} mb='3em'>
         <Heading as='h1' sx={{ flex: '1 1 auto' }}>
           {place.name}
@@ -33,11 +33,13 @@ export const PlaceDetails = memo(({
         {!imageSets.length && (
           <Text sx={{ fontStyle: 'italic' }}>{'Nie ma tu jeszcze żadnych prac.'}</Text>
         )}
-        {imageSets.map(([id, imageSetSummary]) =>
-          <ImageSetSummary key={id} imageSet={imageSetSummary} />
-        )}
+        <Flex sx={{ gap: '2em', flexDirection: 'column', alignItems: 'stretch' }}>
+          {imageSets.map(([id, imageSetSummary]) =>
+            <ImageSetSummary key={id} imageSet={imageSetSummary} />
+          )}
+        </Flex>
       </Box>
-    </>
+    </Box>
   );
 })
 
