@@ -6,9 +6,8 @@ export DOCKER_BUILDKIT=1
 function make-context-tarball() {
   tar -c \
     './Dockerfile' \
-    './yarn.lock' './package.json' \
-    './app/build' `#'./app/package.json'` \
-    './server/build' './server/package.json'
+    './app/build' \
+    './server/build'
 }
 
 npx turbo run build
