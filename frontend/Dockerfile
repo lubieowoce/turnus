@@ -1,11 +1,20 @@
 FROM node:18-alpine
 
-WORKDIR /app
-COPY ./server/package.json ./server/yarn.lock ./
+WORKDIR /skadinad
 
-RUN yarn install --frozen-lockfile --production=true
+COPY ./package.json ./yarn.lock ./
+COPY ./server/package.json ./server/
 
-COPY ./server/build ./build
-COPY ./app/build /assets
+WORKDIR /skadinad/server
+RUN yarn install \
+      --frozen-lockfile --production=true --focus
+
+WORKDIR /skadinad/
+COPY ./server/build ./server/build/
+COPY ./app/build /assets/
+
+# RUN sh -c 'du -h -d 1 node_modules' && exit 1;
+
+WORKDIR /skadinad/server
 
 CMD [ "yarn", "run", "start" ]
