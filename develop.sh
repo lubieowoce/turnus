@@ -23,5 +23,5 @@ else
   docker ps --filter ancestor='skadinad/backend-server'
 fi
 
-cd frontend/
+cd frontend/app
 BACKEND_HOST="localhost:$BACKEND_PORT" yarn run start
