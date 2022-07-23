@@ -15,6 +15,7 @@ services:
     environment:
       DUID: '1000'
       DGID: '1000'
+      NGINX_CLIENT_MAX_BODY_SIZE: '20m'
     volumes:
       - 'grav-data:/var/www/grav/user'
 volumes:
