@@ -14,14 +14,14 @@ const styles = {
     bottom: 0,
     left: 0,
     right: 0,
-    position: 'absolute',
+    position: 'fixed',
   } as ThemeUIStyleObject,
   backdrop: {
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-    position: 'absolute',
+    position: 'fixed',
   } as ThemeUIStyleObject,
 }
 
@@ -53,7 +53,7 @@ export const ThemedDialogBackdrop = forwardRef<any, DialogBackdropProps>(({ sx, 
       <DialogBackdrop
         ref={ref}
         {...props}
-        className={cls({ ...styles.backdrop, ...sx }) + ' my-backdrop'}
+        className={cls({ ...styles.backdrop, ...sx })}
       >
         {children}
       </DialogBackdrop>

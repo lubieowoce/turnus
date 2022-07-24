@@ -6,20 +6,15 @@ import { omit } from 'lodash';
 
 import rawBaseTheme from 'theme-ui-preset-geist';
 
-// disable dark mode for now
-const baseTheme = {
-  ...rawBaseTheme,
-  colors: omit(rawBaseTheme.colors, 'modes'),
-}
+
+const baseTheme = omit(rawBaseTheme, [
+  'colors.modes', // disable dark mode for now
+  'styles.root', // disable height: 100% what messes up body-scroll locks in modals
+]);
 
 console.log(baseTheme)
 
 export const theme = merge(baseTheme as Theme, {
-  styles: {
-    root: {
-      height: '100%',
-    },
-  },
   fonts: {
     body: 'Arial',
     heading: 'Junicode Condensed'

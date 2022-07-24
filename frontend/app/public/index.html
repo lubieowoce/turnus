@@ -11,9 +11,12 @@
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <style>
-      html, body, #root {
-        height: 100%;
+      /* this breaks body scroll-lock in modals for some reason */
+      /*
+      body, #root {
+        min-height: 100vh;
       }
+      */
 
       @font-face {
         font-family: 'Junicode Condensed';

@@ -28,6 +28,7 @@ export const MapView = ({ selectedId, setSelectedId }) => {
   const { width = null, height = null } = size || {}
 
   const style = useMemo(() => ({
+    height: `calc(100vh - ${HEADER_HEIGHT})`,
     maxHeight: `calc(100vh - ${HEADER_HEIGHT})`,
   }), []);
 
