@@ -6,6 +6,7 @@ import {
   Flex,
   Heading,
   ThemeProvider,
+  ThemeUIStyleObject,
 } from 'theme-ui';
 import { MapView } from './map'
 import { theme } from './theme';
@@ -28,6 +29,7 @@ import { PlaceList } from './place-list';
 import { DialogDisclosure, useDialogState } from 'reakit/Dialog';
 import { InfoPopup } from './info-popup';
 import { Link } from './support/themed-link';
+import { MainNav } from './nav';
 
 const Root = () => {
   const [queryClient] = useState(() =>
@@ -58,14 +60,15 @@ const Root = () => {
   );
 }
 
+const linksLeft = [
+  { to: '/miejscowosci', label: 'Miejscowości' },
+  { to: '/mapa', label: 'Mapa' },
+  { to: '/wystawy', label: 'Wystawy' },
+]
+
 const MainLayout = () => {
   const infoPopup = useDialogState();
 
-  const linksLeft = [
-    <Link sx={fancyTextStyle} to={'/miejscowosci'}>Miejscowości</Link>,
-    <Link sx={fancyTextStyle} to={'/mapa'}>Mapa</Link>,
-    <Link sx={fancyTextStyle} to={'/wystawy'}>Wystawy</Link>,
-  ]
   const linksRight = [
     <DialogDisclosure as="a" style={{...fancyTextStyle, cursor: 'pointer'}} {...infoPopup}>
       Info
@@ -81,9 +84,7 @@ const MainLayout = () => {
         alignItems: 'stretch',
       }}>
         <Flex as='nav' sx={{ flex: `0 0 ${HEADER_HEIGHT}`, backgroundColor: 'background' }}>
-          <Flex py='1em' px={PADDING_BODY.horizontal} sx={{ gap: '7ch' }}>
-            {linksLeft.map((el) => <Box key={el.props.to}>{el}</Box>)}
-          </Flex>
+          <MainNav links={linksLeft} />
           <div style={{ flex: '1 auto' }} />
           {linksRight.map((el) => <Box key={el.props.to} py='1em' px={PADDING_BODY.horizontal}>{el}</Box>)}
         </Flex>
@@ -95,6 +96,8 @@ const MainLayout = () => {
     </>
   )
 }
+
+
 
 const PlacesIndex = () => {
   const places = usePlaces();
