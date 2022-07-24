@@ -2,8 +2,17 @@ import {
   merge,
   Theme,
 } from 'theme-ui';
+import { omit } from 'lodash';
 
-import baseTheme from 'theme-ui-preset-geist';
+import rawBaseTheme from 'theme-ui-preset-geist';
+
+// disable dark mode for now
+const baseTheme = {
+  ...rawBaseTheme,
+  colors: omit(rawBaseTheme.colors, 'modes'),
+}
+
+console.log(baseTheme)
 
 export const theme = merge(baseTheme as Theme, {
   styles: {
@@ -21,5 +30,5 @@ export const theme = merge(baseTheme as Theme, {
   },
   sizes: {
     'sidebar': 350,
-  }
+  },
 })
