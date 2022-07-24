@@ -54,7 +54,6 @@ const Root = () => {
           location={location}
           routes={routes}
         />
-        {/* <App /> */}
       </ThemeProvider>
     </QueryClientProvider >
   );
@@ -70,7 +69,7 @@ const MainLayout = () => {
   const infoPopup = useDialogState();
 
   const linksRight = [
-    <DialogDisclosure as="a" style={{...fancyTextStyle, cursor: 'pointer'}} {...infoPopup}>
+    <DialogDisclosure as="a" style={{ ...fancyTextStyle, cursor: 'pointer' }} {...infoPopup}>
       Info
     </DialogDisclosure>
   ];
