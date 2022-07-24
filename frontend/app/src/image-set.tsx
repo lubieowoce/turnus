@@ -7,6 +7,7 @@ import {
   Image,
   AspectRatio,
   Container,
+  ThemeUIStyleObject,
 } from 'theme-ui';
 
 import Lightbox from 'react-image-lightbox';
@@ -56,14 +57,20 @@ export const ImageSetDetails = memo(({
       <Heading as='h3' sx={{ flex: '1 1 auto' }}>
         {imageSet.author}
       </Heading>
-      <Box sx={{ maxWidth: ['100%', 'small'] }}>
+      <Box>
         <Box
-          sx={{ fontFamily: 'body' }}
+          sx={{
+            fontFamily: 'body',
+            marginBottom: '2em',
+            maxWidth: ['100%', 'small'],
+          }}
           dangerouslySetInnerHTML={{ __html: imageSet.content }}
         />
         <ImageSetGallery
           images={images}
           onImageClick={(imageIndex) => setLightbox({ isOpen: true, imageIndex })}
+          columns={[1, 2, null, 3]}
+          sx={{ maxWidth: ['100%', 'small', null, 'large' ]}}
         />
         {lightbox.isOpen && (
           <Lightbox
@@ -90,15 +97,18 @@ const plusMod = (n: number, delta: number, mod: number) =>
 type ImageSetGalleryProps = {
   images: ImageMediaObject[],
   onImageClick?: (index: number) => void,
+  columns: (number | null)[],
+  sx?: ThemeUIStyleObject,
 }
 
-const ImageSetGallery = ({ images, onImageClick }: ImageSetGalleryProps) => {
+const ImageSetGallery = ({ images, onImageClick, columns, sx }: ImageSetGalleryProps) => {
   return (
     <Box sx={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
+      gridTemplateColumns: columns.map((cols) => cols !== null ? `repeat(${cols}, 1fr)` : null),
       gap: '10px 10px',
-      pb: '3',
+      paddingBottom: '3em',
+      ...sx,
     }}>
       {images.map(({ url }, index) =>
         <AspectRatio ratio={1 / 1} key={url}>
