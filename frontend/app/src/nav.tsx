@@ -3,7 +3,7 @@ import { useDialogState } from "reakit/Dialog";
 import { Box, Flex, ThemeUIStyleObject, Close, Text } from "theme-ui";
 import { fancyTextStyle, PADDING_BODY, HEADER_HEIGHT } from "./config";
 import { ResponsiveSwitch } from "./support/responsive";
-import { ThemedDialog } from "./support/themed-dialog";
+import { ThemedDialog, ThemedDialogBackdrop } from "./support/themed-dialog";
 import { Link } from "./support/themed-link";
 
 type LinkDef = { to: string, label: string }
@@ -44,7 +44,6 @@ const PopupNav = ({ links }: { links: LinkDef[] }) => {
       </Round>
     </Link>
   );
-
   return (
     <>
       <Link
@@ -54,22 +53,24 @@ const PopupNav = ({ links }: { links: LinkDef[] }) => {
       >
         Menu
       </Link>
-      <ThemedDialog {...navPopup} sx={{ top: HEADER_HEIGHT }}>
-        <Flex sx={{
-          height: '100%',
-          flexDirection: 'column',
-          justifyContent: 'stretch',
-          alignItems: 'stretch',
-        }}>
-          <Close
-            onClick={navPopup.hide}
-            sx={{ cursor: 'pointer', position: 'fixed', top: 0, right: 0, margin: '1rem', backgroundColor: 'background' }}
-          />
-          {links.map(({ to, label }, i) =>
-            item({ to, label, color: popupNavColors[i % popupNavColors.length] })
-          )}
-        </Flex>
-      </ThemedDialog>
+      <ThemedDialogBackdrop {...navPopup} sx={{ backgroundColor: 'rgba(255,255,255, 0.35)'}}>
+        <ThemedDialog {...navPopup} sx={{ top: HEADER_HEIGHT }}>
+          <Flex sx={{
+            height: '100%',
+            flexDirection: 'column',
+            justifyContent: 'stretch',
+            alignItems: 'stretch',
+          }}>
+            <Close
+              onClick={navPopup.hide}
+              sx={{ cursor: 'pointer', position: 'fixed', top: 0, right: 0, margin: '1rem', backgroundColor: 'background' }}
+            />
+            {links.map(({ to, label }, i) =>
+              item({ to, label, color: popupNavColors[i % popupNavColors.length] })
+            )}
+          </Flex>
+        </ThemedDialog>
+      </ThemedDialogBackdrop>
     </>
   )
 }
