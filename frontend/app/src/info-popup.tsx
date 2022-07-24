@@ -1,8 +1,7 @@
-import { ClassNames } from "@emotion/react";
 import { Box, Close, Flex, Heading, ThemeUIStyleObject } from 'theme-ui';
 import { Dialog, DialogProps, DialogBackdrop } from "reakit/Dialog";
 import { fancyTextStyle } from "./config";
-import { useApplyTheme } from "./support/use-apply-theme";
+import { ClassNames } from "./support/classnames";
 
 const styles = {
   dialog: {
@@ -18,13 +17,12 @@ const styles = {
 }
 
 export const InfoPopup = (props: Omit<DialogProps, 'className'>) => {
-  const applyTheme = useApplyTheme()
   return (
-    <ClassNames>{({ css }) => (
+    <ClassNames>{(cls) => (
       <DialogBackdrop {...props}>
         <Dialog
           {...props}
-          className={css(applyTheme(styles.dialog))}
+          className={cls(styles.dialog)}
         >
           <Close
             onClick={props.hide}

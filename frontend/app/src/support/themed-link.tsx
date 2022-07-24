@@ -1,6 +1,5 @@
 import { Link as BaseLink, LinkProps } from '@tanstack/react-location';
-import { ClassNames } from "@emotion/react";
-import { useApplyTheme } from './use-apply-theme';
+import { ClassNames } from "./classnames";
 import { ThemeUIStyleObject } from 'theme-ui';
 
 const base = {
@@ -36,13 +35,12 @@ type Props = {
 } & LinkProps;
 
 export const Link = ({ variant = 'default', sx, ...props }: Props) => {
-  const applyTheme = useApplyTheme()
   return (
-    <ClassNames>
-      {({ css }) => {
-        const linkClass = css(applyTheme({ ...styles[variant], ...sx }));
-        return <BaseLink {...props} className={linkClass} />
-      }}
-    </ClassNames>
+    <ClassNames>{(cls) =>
+      <BaseLink
+        {...props}
+        className={cls({ ...styles[variant], ...sx })}
+      />
+    }</ClassNames>
   )
 }

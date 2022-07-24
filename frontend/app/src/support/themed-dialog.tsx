@@ -1,4 +1,3 @@
-import { ClassNames } from "@emotion/react";
 import { forwardRef } from "react";
 import {
   Dialog,
@@ -7,7 +6,7 @@ import {
   DialogBackdropProps as BaseDialogBackdropProps
 } from "reakit/Dialog";
 import { ThemeUIStyleObject } from "theme-ui";
-import { useApplyTheme } from "./use-apply-theme"
+import { ClassNames } from "./classnames";
 
 const styles = {
   dialog: {
@@ -31,13 +30,12 @@ type DialogProps = Omit<BaseDialogProps, 'className'> & {
 }
 
 export const ThemedDialog = forwardRef<any, DialogProps>(({ sx, children, ...props }, ref) => {
-  const applyTheme = useApplyTheme()
   return (
-    <ClassNames>{({ css }) => (
+    <ClassNames>{(cls) => (
       <Dialog
         ref={ref}
         {...props}
-        className={css(applyTheme({...styles.dialog, ...sx }))}
+        className={cls({...styles.dialog, ...sx })}
       >
         {children}
       </Dialog>
@@ -50,13 +48,12 @@ type DialogBackdropProps = Omit<BaseDialogBackdropProps, 'className'> & {
 }
 
 export const ThemedDialogBackdrop = forwardRef<any, DialogBackdropProps>(({ sx, children, ...props }, ref) => {
-  const applyTheme = useApplyTheme()
   return (
-    <ClassNames>{({ css }) => (
+    <ClassNames>{(cls) => (
       <DialogBackdrop
         ref={ref}
         {...props}
-        className={css(applyTheme({ ...styles.backdrop, ...sx })) + ' my-backdrop'}
+        className={cls({ ...styles.backdrop, ...sx }) + ' my-backdrop'}
       >
         {children}
       </DialogBackdrop>
