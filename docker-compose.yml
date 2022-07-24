@@ -8,6 +8,7 @@ services:
       - 'backend'
     environment:
       BACKEND_HOST: 'backend' # http://backend/...
+    restart: unless-stopped
   'backend':
     image: 'skadinad/backend-server'
     expose:
@@ -18,5 +19,6 @@ services:
       NGINX_CLIENT_MAX_BODY_SIZE: '20m'
     volumes:
       - 'grav-data:/var/www/grav/user'
+    restart: unless-stopped
 volumes:
   'grav-data':
