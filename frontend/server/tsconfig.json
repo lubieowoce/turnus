@@ -1,21 +1,15 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
-    "outDir": "./build",
+    "lib": [
+      "es2022"
+    ],
     "module": "ESNext",
-    "sourceMap": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": false,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "theme-ui"
+    "target": "es2022",
+    "outDir": "./build",
   },
+  "files": [],
   "include": [
     "src"
   ],
-  "exclude": [
-    "node_modules"
-  ]
 }
