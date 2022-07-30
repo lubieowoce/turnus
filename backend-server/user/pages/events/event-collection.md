@@ -1,4 +1,4 @@
 ---
-title: Exhibitions
+title: Events
 ---
 

@@ -2,8 +2,8 @@
     {
         events: page.children | map (p => {
             title: p.title,
-            location: page.location,
-            time: p.time,
+            location: p.header.location,
+            time: p.header.time,
             id: p.slug,
             summary: p.summary(500) | striptags,
             media: p.media | map(m => { url: m.url, meta: m.meta }),

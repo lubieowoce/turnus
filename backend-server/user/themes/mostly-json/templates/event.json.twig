@@ -1,8 +1,8 @@
 {{
     {
         title: page.title,
-        location: page.location,
-        time: page.time,
+        location: page.header.location,
+        time: page.header.time,
         id: page.slug,
         content: page.content,
         media: page.media | map(m => { url: m.url, meta: m.meta }) | array,
