@@ -77,12 +77,38 @@ export type Places = {
   "items": Record<PlaceId, Place>,
 }
 
+export type EventList = {
+  "meta": Record<string, any>,
+  "count": number,
+  "events": Record<string, EventSummary>,
+}
+
+export type EventSummary = {
+  "title": string,
+  "location": string,
+  "time": string,
+  "id": string,
+  "summary": string,
+  "media": Record<string, ImageMediaObject>,
+}
+
 export const usePlaces = () => {
   const url = `${API_ROOT}/places.json`
   return useQuery({
     queryFn: async () => {
       const res = await fetch(url)
       return await res.json() as Places;
+    },
+    queryKey: url,
+  })
+}
+
+export const useEvents = () => {
+  const url = `${API_ROOT}/events.json`
+  return useQuery({
+    queryFn: async () => {
+      const res = await fetch(url)
+      return await res.json() as EventList;
     },
     queryKey: url,
   })

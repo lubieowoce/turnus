@@ -1,5 +1,5 @@
 ---
-title: 'Cośtam cośtam'
+title: 'Turnus - Skądinąd #1'
 media_order: 'img1.png,img2.png,img3.png'
 location: Warszawa
 time: '01.07.2022'

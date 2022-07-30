@@ -18,7 +18,7 @@ import {
   useMatch,
   useNavigate,
 } from '@tanstack/react-location'
-import { useImageSet, usePlace, usePlaces } from './api';
+import { useEvents, useImageSet, usePlace, usePlaces } from './api';
 import { PlaceDetails } from './place-details';
 import { useGoBack } from './utils';
 import { CenterSpinner } from './support/center-spinner';
@@ -30,6 +30,7 @@ import { DialogDisclosure, useDialogState } from 'reakit/Dialog';
 import { InfoPopup } from './info-popup';
 import { Link } from './support/themed-link';
 import { MainNav } from './nav';
+import { EventList } from './event-list';
 
 const Root = () => {
   const [queryClient] = useState(() =>
@@ -139,6 +140,17 @@ const ImageSetDetailsRoute = () => {
   )
 }
 
+const EventsListRoute = () => {
+  const eventList = useEvents();
+  return (
+    eventList.isSuccess ? (
+      <EventList eventList={eventList.data} />
+    ) : (
+      <CenterSpinner />
+    )
+  )
+}
+
 const MapRoute = () => {
   const { params: { placeId } } = useMatch();
   const navigate = useNavigate();
@@ -198,7 +210,7 @@ const routes: Route[] = [
       },
       {
         path: 'wystawy',
-        element: <Heading>Wystawy</Heading>
+        element: <EventsListRoute />
       },
     ],
   }
