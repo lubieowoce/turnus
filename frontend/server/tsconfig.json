@@ -2,10 +2,10 @@
   "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
     "lib": [
-      "es2022"
+      "esnext"
     ],
     "module": "ESNext",
-    "target": "es2022",
+    "target": "esnext",
     "outDir": "./build",
   },
   "files": [],

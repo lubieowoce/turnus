@@ -12,7 +12,7 @@ export const proxyToBackend = (app: Express, { backendHost }: Options) =>
       '/backend/',
     ],
     createProxyMiddleware({
-      target: `http://${backendHost}/`,
+      target: `http://${backendHost}`,
       pathRewrite: {
         '^/api/': '/backend/api/',
       },
