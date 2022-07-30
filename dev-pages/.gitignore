@@ -1,2 +1,4 @@
-# added from template
+# added by the template if we mount this dir as a volume
+events/event-collection.md
 home/default.md
+places/place-collection.md
