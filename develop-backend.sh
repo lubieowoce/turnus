@@ -2,6 +2,7 @@
 set -eu -o pipefail;
 
 BACKEND_PORT=8000
+DEV_VOLUME_NAME='skadinad-dev-local-volume'
 
 export DOCKER_BUILDKIT=1
 
@@ -10,10 +11,13 @@ function realpath() {
   node -p 'require("fs").realpathSync(process.argv[1] ?? ".")' "$1"
 }
 
+# ensure the volume exists
+docker volume inspect "$DEV_VOLUME_NAME" || docker volume create "$DEV_VOLUME_NAME"
 
 docker build 'backend-server/' --tag 'skadinad/backend-server:dev'
 docker run -d \
   -v "$(realpath ./dev-pages):/var/www/grav/user/pages" \
+  -v "$DEV_VOLUME_NAME:/var/www/grav/user/accounts" \
   -p "$BACKEND_PORT:80" \
   'skadinad/backend-server:dev'
 docker ps --filter ancestor='skadinad/backend-server:dev' --format '{{.Names}}'
