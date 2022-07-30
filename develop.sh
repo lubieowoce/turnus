@@ -2,8 +2,12 @@
 set -eu -o pipefail;
 
 BACKEND_PORT=8000
+DEV_VOLUME_NAME='skadinad-dev-local-volume'
 
 export DOCKER_BUILDKIT=1
+
+# ensure the volume exists
+docker volume inspect "$DEV_VOLUME_NAME" || docker volume create "$DEV_VOLUME_NAME"
 
 function realpath() {
   # sigh, OSX... and we can't assume python either
@@ -16,6 +20,7 @@ if [ $RUNNING = 0 ]; then
   docker build 'backend-server/' --tag 'skadinad/backend-server'
   docker run -d \
     -v "$(realpath ./dev-pages):/var/www/grav/user/pages" \
+    -v "$DEV_VOLUME_NAME:/var/www/grav/user/accounts" \
     -p "$BACKEND_PORT:80" \
     'skadinad/backend-server'
 else
