@@ -6,6 +6,9 @@ session:
 home:
   alias: '/home'
 
+# todo: never_cache_twig: true?
+# https://learn.getgrav.org/17/content/headers#never-cache-twig
+
 pages:
   theme: mostly-json
   markdown:

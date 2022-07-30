@@ -1,0 +1,16 @@
+title: Event
+'@extends':
+  type: default
+  context: blueprints://pages
+form:
+  fields:
+    header.location:
+      style: vertical
+      type: text
+      label: 'Location'
+      placeholder: 'Warszawa'
+    header.time:
+      style: vertical
+      type: text
+      label: 'Time'
+      placeholder: '01.12.2022'
