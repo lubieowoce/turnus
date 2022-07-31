@@ -92,6 +92,15 @@ export type EventSummary = {
   "media": Record<string, ImageMediaObject>,
 }
 
+export type EventDetails = {
+  "title": string,
+  "location": string,
+  "time": string,
+  "id": string,
+  "content": string,
+  "media": Record<string, ImageMediaObject>,
+}
+
 export const usePlaces = () => {
   const url = `${API_ROOT}/places.json`
   return useQuery({
@@ -109,6 +118,17 @@ export const useEvents = () => {
     queryFn: async () => {
       const res = await fetch(url)
       return await res.json() as EventList;
+    },
+    queryKey: url,
+  })
+}
+
+export const useEventDetails = ({ eventId }: { eventId: string }) => {
+  const url = `${API_ROOT}/events/${eventId}.json`
+  return useQuery({
+    queryFn: async () => {
+      const res = await fetch(url)
+      return await res.json() as EventDetails;
     },
     queryKey: url,
   })

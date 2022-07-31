@@ -18,7 +18,7 @@ import {
   useMatch,
   useNavigate,
 } from '@tanstack/react-location'
-import { useEvents, useImageSet, usePlace, usePlaces } from './api';
+import { useEventDetails, useEvents, useImageSet, usePlace, usePlaces } from './api';
 import { PlaceDetails } from './place-details';
 import { useGoBack } from './utils';
 import { CenterSpinner } from './support/center-spinner';
@@ -31,6 +31,7 @@ import { InfoPopup } from './info-popup';
 import { Link } from './support/themed-link';
 import { MainNav } from './nav';
 import { EventList } from './event-list';
+import { EventDetails } from './event-details';
 
 const Root = () => {
   const [queryClient] = useState(() =>
@@ -151,6 +152,20 @@ const EventsListRoute = () => {
   )
 }
 
+const EventDetailsRoute = () => {
+  const { params: { eventId } } = useMatch();
+  const event = useEventDetails({ eventId });
+  return (
+    event.isSuccess ? (
+      <Box py='1em' px={PADDING_BODY.horizontal} sx={{ flexWrap: 'wrap' }}>
+        <EventDetails event={event.data} />
+      </Box>
+    ) : (
+      <CenterSpinner />
+    )
+  )
+}
+
 const MapRoute = () => {
   const { params: { placeId } } = useMatch();
   const navigate = useNavigate();
@@ -210,7 +225,18 @@ const routes: Route[] = [
       },
       {
         path: 'wystawy',
-        element: <EventsListRoute />
+        children: [
+          {
+            path: '/',
+            element: <EventsListRoute />,
+            errorElement: <ErrorFallback />
+          },
+          {
+            path: ':eventId',
+            element: <EventDetailsRoute />,
+            errorElement: <ErrorFallback />,
+          },
+        ],
       },
     ],
   }
