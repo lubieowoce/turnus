@@ -17,6 +17,7 @@ import {
   Router,
   useMatch,
   useNavigate,
+  Navigate,
 } from '@tanstack/react-location'
 import { useEventDetails, useEvents, useImageSet, usePlace, usePlaces } from './api';
 import { PlaceDetails } from './place-details';
@@ -237,6 +238,9 @@ const routes: Route[] = [
             errorElement: <ErrorFallback />,
           },
         ],
+      },
+      {
+        element: <Navigate to={'./mapa'} />
       },
     ],
   }
