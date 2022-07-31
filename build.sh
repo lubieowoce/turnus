@@ -10,3 +10,7 @@ popd
 pushd backend-server
 docker build . --tag skadinad/backend-server
 popd
+
+pushd proxy
+docker build . --tag skadinad/proxy
+popd

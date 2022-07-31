@@ -1,9 +1,19 @@
 version: '3'
 services:
-  'frontend-server':
+  'proxy':
+    image: 'skadinad/proxy'
+    ports:
+      - '80:80'
+      - '443:443'
+    expose:
+      - '80'
+    restart: unless-stopped
+  'frontend':
     image: 'skadinad/frontend-server'
     ports:
-      - '9000:80'
+      - '9000:80' # TODO: dev only!
+    expose:
+      - '80'
     depends_on:
       - 'backend'
     environment:
@@ -11,6 +21,8 @@ services:
     restart: unless-stopped
   'backend':
     image: 'skadinad/backend-server'
+    ports:
+      - '8000:80' # TODO: dev only!
     expose:
       - '80'
     environment:

@@ -1,20 +1,17 @@
 import express from 'express';
 import path from 'path';
-import { proxyToBackend } from './proxy';
 
 const app = express();
 
 const ASSETS_DIR = process.env.ASSETS_DIR ?? '/assets';
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 80;
 const HOST = process.env.HOST ?? '0.0.0.0';
-const BACKEND_HOST = process.env.BACKEND_HOST;
-if (!BACKEND_HOST) {
-  throw new Error('Backend host not defined');
-}
+// const BACKEND_HOST = process.env.BACKEND_HOST;
+// if (!BACKEND_HOST) {
+//   throw new Error('Backend host not defined');
+// }
 
 app.use(express.static(ASSETS_DIR));
-
-proxyToBackend(app, { backendHost: BACKEND_HOST });
 
 app.get('/*', function (req, res) {
   res.sendFile(path.join(ASSETS_DIR, 'index.html'));
