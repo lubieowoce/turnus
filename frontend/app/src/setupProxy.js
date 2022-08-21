@@ -10,14 +10,10 @@ if (!backendHost) {
 module.exports = (app) => {
   app.use(
     [
-      '/api/',
       '/backend/',
     ],
     createProxyMiddleware({
       target: `http://${backendHost}/`,
-      pathRewrite: {
-        '^/api/': '/backend/api/',
-      },
       logLevel: 'debug',
     })
   );

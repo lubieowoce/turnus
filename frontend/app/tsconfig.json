@@ -11,5 +11,8 @@
   "files": [],
   "include": [
     "src"
+  ],
+  "exclude": [
+    "src/setupProxy.js"
   ]
 }
