@@ -3,9 +3,10 @@ import {
   Geographies,
   Geography,
   Marker,
-  ZoomableGroup
+  ZoomableGroup,
+  useZoomPanContext,
 } from "react-simple-maps";
-import { memo, RefCallback, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, RefCallback, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Box, Container, Spinner,
 } from 'theme-ui';
@@ -124,7 +125,7 @@ export const Map = memo(({
     mapOutline: 'rgb(179, 216, 238)',
   }), []);
   const sizes = {
-    marker: '8'
+    marker: 8
   }
   return (
     <ComposableMap
@@ -149,34 +150,44 @@ export const Map = memo(({
           )), [])}
         </Geographies>
         {useMemo(() => (
-          places && Object.values(places).map(
-            ({ id, coordinates: { lat, lon }, name }, index) => <Marker key={id} coordinates={[lon, lat]}>
-              <g
-                onClick={() => setSelectedId(id)}
-                style={{ cursor: 'pointer', userSelect: 'none' }}
-              >
-                <circle
-                  r={sizes.marker}
-                  fill={id === selectedId ? colors.selected : colors.default}
-                  stroke="#fff"
-                  strokeWidth={0.25}
-                />
-                {/* <text
-                  style={{ fontSize: '12pt', fontFamily: 'Arial', fontWeight: id === selectedId ? 'bold' : 'normal' }}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fill="#333"
+          <ZoomPanContextConsumer render={(zoomPan) =>
+            places && Object.values(places).map(
+              ({ id, coordinates: { lat, lon }, name }, index) => <Marker key={id} coordinates={[lon, lat]}>
+                <g
+                  onClick={() => setSelectedId(id)}
+                  style={{ cursor: 'pointer', userSelect: 'none' }}
+                  transform={`scale(${1/zoomPan.k})`}
                 >
-                  {index + 1}
-                </text> */}
-              </g>
-              <text y={-12} style={{ fontSize: '12pt', fontFamily: 'Arial', userSelect: 'none' }} textAnchor="middle" fill="#333">
-                {name}
-              </text>
-            </Marker>
-          )
-        ), [places, selectedId, setSelectedId, colors])}
+                  <circle
+                    r={sizes.marker}
+                    fill={id === selectedId ? colors.selected : colors.default}
+                    stroke="#fff"
+                    strokeWidth={0.25}
+                  />
+                  {/* <text
+                    style={{ fontSize: '12pt', fontFamily: 'Arial', fontWeight: id === selectedId ? 'bold' : 'normal' }}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fill="#333"
+                  >
+                    {index + 1}
+                  </text> */}
+                  <text y={-12} style={{ fontSize: '12pt', fontFamily: 'Arial', userSelect: 'none' }} textAnchor="middle" fill="#333">
+                    {name}
+                  </text>
+                </g>
+              </Marker>
+            )
+          } />
+        ), [places, selectedId, setSelectedId, colors, sizes])}
       </ZoomableGroup>
     </ComposableMap>
   )
 });
+
+type ZoomPanContextValue = { x: number, y: number, k: number, transformString: string }
+
+const ZoomPanContextConsumer = ({ render }: { render: (ctx: ZoomPanContextValue) => React.ReactNode }) => {
+  const zoomPanContext = useZoomPanContext();
+  return <>{render(zoomPanContext)}</>
+}
