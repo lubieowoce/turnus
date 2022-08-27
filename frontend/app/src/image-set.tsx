@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Heading,
@@ -12,12 +12,18 @@ import {
 
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css'
-import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock/lib/bodyScrollLock.esm';
+import {
+  disableBodyScroll,
+  enableBodyScroll,
+  clearAllBodyScrollLocks,
+} from 'body-scroll-lock/lib/bodyScrollLock.esm';
 
+import { IMAGE_FALLBACK_COLOR } from './config'
 import {
   ImageMediaObject,
   ImageSetDetails as ImageSetDetailsType,
 } from "./api";
+import useEventCallback from 'use-event-callback';
 
 
 export const ImageSetDetails = memo(({
@@ -32,14 +38,15 @@ export const ImageSetDetails = memo(({
   // so we need to do it the old way
   const lightboxClass = `lightbox-wrapper-${imageSet.id}`;
 
-  const lockScroll = () => {
+  const lockScroll = useEventCallback(() => {
     const el = document.getElementsByClassName(lightboxClass).item(0);
     if (!el) {
       return;
     }
     disableBodyScroll(el);
-  }
-  const unlockScroll = () => {
+  });
+
+  const unlockScroll = useEventCallback(() => {
     const el = document.getElementsByClassName(lightboxClass).item(0);
     if (!el) {
       // something weird happened, make sure we're not stuck with a locked scroll
@@ -47,7 +54,17 @@ export const ImageSetDetails = memo(({
       return;
     }
     enableBodyScroll(el);
-  }
+  })
+
+  useEffect(() => {
+    // always clear scroll lock
+    // (if the lighttbox was exited with a router-level "back",
+    //  we'd be stuck with a locked scroll)
+    return () => {
+      console.log('clearing scroll')
+      unlockScroll();
+    }
+  }, [unlockScroll]);
 
   return (
     <Box>
@@ -119,6 +136,7 @@ const ImageSetGallery = ({ images, onImageClick, columns, sx }: ImageSetGalleryP
               height: '100%',
               width: '100%',
               cursor: onImageClick ? 'pointer' : 'unset',
+              backgroundColor: IMAGE_FALLBACK_COLOR,
             }}
             onClick={onImageClick && (() => onImageClick(index))}
           />
