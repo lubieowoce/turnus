@@ -12,6 +12,11 @@ const active = {
   textDecorationThickness: '2px',
 } as ThemeUIStyleObject
 
+const mergedActive = {
+  ...base,
+  ...active,
+}
+
 const _default = {
   ...base,
   '&:visited': base,
@@ -36,11 +41,17 @@ type Props = {
 
 export const Link = ({ variant = 'default', sx, ...props }: Props) => {
   return (
-    <ClassNames>{(cls) =>
-      <BaseLink
-        {...props}
-        className={cls({ ...styles[variant], ...sx })}
-      />
+    <ClassNames>{(cls) => {
+      const activeCls = cls(mergedActive);
+      const dynamicCls = cls({ ...styles[variant], ...sx });
+      return (
+        <BaseLink
+          {...props}
+          getActiveProps={() => ({ className: activeCls  })}
+          className={dynamicCls}
+        />
+      )
+    }
     }</ClassNames>
   )
 }
