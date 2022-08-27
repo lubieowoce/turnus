@@ -4,6 +4,9 @@
         id: page.slug,
         description: page.summary(50) | striptags,
         coordinates: page.header.coordinates,
+        place_type: page.header.place_type,
+        is_capital: page.header.is_capital,
+        population: page.header.population,
         imageSets: page.children | map (p => {
             title: p.title,
             author: p.header.author,

@@ -4,7 +4,10 @@
             name: p.title,
             id: p.slug,
             description: p.summary(50) | striptags,
-            coordinates: p.header.coordinates
+            coordinates: p.header.coordinates,
+            place_type: p.header.place_type,
+            is_capital: p.header.is_capital,
+            population: p.header.population,
         }),
     }
     | json_encode | raw

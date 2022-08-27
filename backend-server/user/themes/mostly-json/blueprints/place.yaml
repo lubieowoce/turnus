@@ -18,7 +18,7 @@ form:
                 description:
                   type: display
                   size: large
-                  label: Coordinates
+                  label: 'Coordinates'
                   markdown: true
                   content: "Find the correct coordinates on a site like [latlong.net](https://www.latlong.net/)"
                 header.coordinates.lat:
@@ -31,3 +31,21 @@ form:
                   label: 'Longitude'
                   placeholder: '21.012230'
                   validate.required: true
+            header.place_type:
+              label: 'Place type'
+              type: select
+              default: 'city'
+              options:
+                'city': 'City'
+              validate.required: true
+            header.is_capital:
+              label: 'This place is a capital'
+              type: checkbox
+              default: false
+            header.population:
+              label: 'Population'
+              type: text
+              help: 'This influences how the place is displayed on the map. Either a number, or null'
+              default: 'null'
+              validate.pattern: '\d+|null'
+              validate.required: true

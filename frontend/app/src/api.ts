@@ -15,6 +15,9 @@ export type Place = {
     "lat": number,
     "lon": number,
   },
+  "place_type": 'city',
+  "is_capital": boolean | null,
+  "population": number | null,
 }
 
 export type PlaceDetails = {
