@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import {
   Box,
   Heading,
@@ -11,7 +11,7 @@ import {
 
 import { ImageMediaObject, ImageSet as ImageSetType, PlaceDetails as PlaceDetailsType } from "./api";
 import { useGoBack } from './utils';
-import { PADDING_BODY } from './config';
+import { IMAGE_FALLBACK_COLOR, PADDING_BODY } from './config';
 import { Link } from './support/themed-link';
 
 export const PlaceDetails = memo(({
@@ -49,7 +49,7 @@ export const PlaceDetails = memo(({
             return (
               <VerticalEntry
                 link={link}
-                image={Object.values(imageSetSummary.media)[0]}
+                image={Object.values(imageSetSummary.media)[0] ?? null}
                 description={
                   <Link variant='reset' to={link}>
                     <Box mt='1em'>
@@ -79,17 +79,30 @@ const CloseButton = ({ onClick }) => (
 
 const imageWidths = ['100%', `20em`, `25em`];
 
-const VerticalEntry = ({ image, link, description }: { image: ImageMediaObject, link: string, description: React.ReactNode }) => {
+const dummyImage = () => (
+  'data:image/svg+xml;base64,' + btoa(`
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="400px"
+      height="300px"
+      style="background-color: ${IMAGE_FALLBACK_COLOR}"
+    >
+    </svg>
+  `)
+)
+
+const VerticalEntry = ({ image, link, description }: { image: ImageMediaObject | null, link: string, description: React.ReactNode }) => {
+  const imageSrc = useMemo(() => image ? image.url : dummyImage(), [image])
   return (
     <Box sx={{ width: imageWidths, flex: 'none' }}>
-      <Link variant='reset' key={image.url} to={link}>
+      <Link variant='reset' to={link}>
         <Image
-          src={image.url}
+          src={imageSrc}
           sx={{
             objectFit: 'cover',
             width: imageWidths,
             // height: imageDims.height,
-            backgroundColor: 'lightgray',
+            backgroundColor: IMAGE_FALLBACK_COLOR,
             aspectRatio: '4 / 3',
           }}
         />

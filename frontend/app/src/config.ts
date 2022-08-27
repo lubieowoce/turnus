@@ -22,3 +22,4 @@ export const fancyTextStyle = {
   fontSize: '1.66rem',
 }
 
+export const IMAGE_FALLBACK_COLOR = '#e7e7e7';
