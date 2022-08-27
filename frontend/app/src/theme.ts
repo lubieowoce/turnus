@@ -12,8 +12,6 @@ const baseTheme = omit(rawBaseTheme, [
   'styles.root', // disable height: 100% what messes up body-scroll locks in modals
 ]);
 
-console.log(baseTheme)
-
 export const theme = merge(baseTheme as Theme, {
   fonts: {
     body: 'Arial',

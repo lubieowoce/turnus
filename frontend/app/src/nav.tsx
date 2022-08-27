@@ -51,7 +51,7 @@ const PopupNav = ({ links }: { links: LinkDef[] }) => {
         style={{ ...fancyTextStyle, cursor: 'pointer' }}
         onClick={(e) => { e.preventDefault(); navPopup.toggle() }}
       >
-        Menu
+        menu
       </Link>
       <ThemedDialogBackdrop {...navPopup} sx={{ backgroundColor: 'rgba(255,255,255, 0.35)'}}>
         <ThemedDialog {...navPopup} sx={{ top: HEADER_HEIGHT }}>

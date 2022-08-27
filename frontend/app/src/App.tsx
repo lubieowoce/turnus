@@ -63,9 +63,9 @@ const Root = () => {
 }
 
 const linksLeft = [
-  { to: '/miejscowosci', label: 'Miejscowości' },
-  { to: '/mapa', label: 'Mapa' },
-  { to: '/wystawy', label: 'Wystawy' },
+  { to: '/miejscowosci', label: 'miejscowości' },
+  { to: '/mapa', label: 'mapa' },
+  { to: '/wystawy', label: 'wystawy' },
 ]
 
 const MainLayout = () => {
@@ -73,7 +73,7 @@ const MainLayout = () => {
 
   const linksRight = [
     <DialogDisclosure as="a" style={{ ...fancyTextStyle, cursor: 'pointer' }} {...infoPopup}>
-      Info
+      info
     </DialogDisclosure>
   ];
   return (
@@ -88,7 +88,9 @@ const MainLayout = () => {
         <Flex as='nav' sx={{ flex: `0 0 ${HEADER_HEIGHT}`, backgroundColor: 'background' }}>
           <MainNav links={linksLeft} />
           <div style={{ flex: '1 auto' }} />
-          {linksRight.map((el) => <Box key={el.props.to} py='1em' px={PADDING_BODY.horizontal}>{el}</Box>)}
+          {linksRight.map((el, i) =>
+            <Box key={el.props.to ?? `${i}`} py='1em' px={PADDING_BODY.horizontal}>{el}</Box>)
+          }
         </Flex>
         <main style={{ flex: '1 auto' }}>
           <Outlet />
