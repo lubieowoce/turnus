@@ -33,6 +33,7 @@ import { Link } from './support/themed-link';
 import { MainNav } from './nav';
 import { EventList } from './event-list';
 import { EventDetails } from './event-details';
+import { Landing } from './landing-page';
 
 const Root = () => {
   const [queryClient] = useState(() =>
@@ -242,7 +243,8 @@ const routes: Route[] = [
         ],
       },
       {
-        element: <Navigate to={'./mapa'} />
+        // path: '/',
+        element: <Landing />,
       },
     ],
   }
