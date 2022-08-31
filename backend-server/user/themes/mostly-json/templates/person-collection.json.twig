@@ -1,0 +1,23 @@
+{%
+set image_sets = page.collection({
+  items: { '@page.descendants': '/places' },
+  filter: { type: 'image-set' },
+  pagination: false
+}) | map (p => {
+  path: ['', 'places', p.parent.slug, p.slug] | join('/'),
+  place: p.parent.slug,
+  title: p.title,
+  author: p.header.author,
+})
+%}
+{% set authors = {} %}
+{% for image_set in image_sets %}
+  {% set author = image_set.author %}
+  {% if author not in authors %}
+    {% set authors = array_key_value(author, [], authors) %}
+  {% endif %}
+  {% set authors = array_key_value(author, authors[author] | merge([image_set]), authors) %}
+{% endfor %}
+{{
+  authors | json_encode | raw
+}}
