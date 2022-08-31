@@ -18,12 +18,7 @@ export const EventList = memo(({
 }) => {
   const events = Object.entries(eventList.events);
   return (
-    <Box sx={{ marginBottom: '2em' }}>
-      <Flex py='1em' px={PADDING_BODY.horizontal} mb='3em'>
-        <Heading as='h1' sx={{ flex: '1 1 auto' }}>
-          Wystawy
-        </Heading>
-      </Flex>
+    <Box sx={{ marginTop: '3em', marginBottom: '2em' }}>
       <Box sx={{ paddingLeft: PADDING_BODY.horizontal }}>
         {!events.length && (
           <Text sx={{ fontStyle: 'italic' }}>{'Nie ma tu jeszcze żadnych wydarzeń.'}</Text>
@@ -34,8 +29,10 @@ export const EventList = memo(({
               link={`./${eventSummary.id}`}
               description={
                 <Box>
-                  <Heading as='h2'>{eventSummary.title}</Heading>
-                  <Heading as='h3'>{eventSummary.location} / {eventSummary.time}</Heading>
+                  <Heading as='h2'>
+                    {eventSummary.title}<br />
+                    {eventSummary.location} / {eventSummary.time}
+                  </Heading>
                   <br />
                   <Paragraph sx={{ fontSize: 0 }}>{eventSummary.summary} ⟶</Paragraph>
                 </Box>

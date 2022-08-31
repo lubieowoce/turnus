@@ -18,8 +18,8 @@ export const COLORS_ACCENT = {
 }
 
 export const fancyTextStyle = {
-  fontFamily: theme?.fonts?.['heading'],
-  fontSize: '1.66rem',
+  fontFamily: theme!.fonts!['heading'],
+  fontSize: theme!.fontSizes![4-1],
 }
 
 export const IMAGE_FALLBACK_COLOR = '#e7e7e7';

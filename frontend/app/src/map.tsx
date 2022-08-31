@@ -15,9 +15,10 @@ import { css } from '@emotion/react';
 
 import { Place, PlaceId, usePlaces, Geography as GeographyType, useMapGeography } from "./api";
 import { useDebounce, useOnWindowResize } from "rooks";
-import { HEADER_HEIGHT } from "./config";
+import { COLORS_ACCENT, HEADER_HEIGHT } from "./config";
 import { CenterSpinner } from "./support/center-spinner";
 import { sortBy } from "lodash";
+import { useSearch } from "@tanstack/react-location";
 
 
 
@@ -99,11 +100,41 @@ const useFullscreenBody = () => {
 type Point = [lon: number, lat: number]
 const MAP_CENTER: Point = [19.2525, 52.0652]
 
-const colors = {
+
+type MapColors = typeof colorsBlue
+
+const colorsBlue = {
   default: 'black',
   selected: 'black',
   mapFill: 'rgb(194, 231, 254)',
+  markerOutline: null as string | null,
   mapOutline: 'rgb(179, 216, 238)',
+}
+
+
+const colorsLight: MapColors = {
+  default: 'black',
+  selected: 'black',
+  mapFill: '#f9f8f6',
+  // mapFill: '#f9f9f9',
+  markerOutline: 'black',
+  mapOutline: 'lightgray',
+}
+
+const colorsTransparent: MapColors = {
+  ...colorsLight,
+  mapFill: 'transparent',
+}
+
+const colorVariants = {
+  'blue': colorsBlue,
+  'light': colorsLight,
+  'transparent': colorsTransparent,
+}
+
+const fontVariants = {
+  'default': 'Arial',
+  'experimental': 'Junicode Condensed'
 }
 
 const BASE_SIZE_MARKER = 4
@@ -168,15 +199,20 @@ const visibility = {
   ),
 }
 
-const renderGeography = ({ geographies }) => geographies.map(geo => (
+const renderGeography = (colors: MapColors) => ({ geographies }) => geographies.map(geo => (
   <Geography
     key={geo.rsmKey}
     geography={geo}
-    fill={colors.mapFill}
+    style={Object.fromEntries(['default', 'hover', 'active'].map((v) => [v, { fill: `var(${vars.mapFill})`}]))}
+    // fill={colors.mapFill}
     stroke={colors.mapOutline}
     strokeWidth="1"
   />
 ))
+
+const vars = {
+  mapFill: '--map-fill-color'
+}
 
 export const Map = memo(({
   width,
@@ -193,6 +229,13 @@ export const Map = memo(({
   places: Record<PlaceId, Place> | undefined,
   geography: GeographyType,
 }) => {
+  const { mapColors: mapColorsSetting, mapFont: mapFontSetting } = useSearch()
+  const currentColors: MapColors = colorVariants[mapColorsSetting as string] ?? colorsLight
+  const currentFont: string = fontVariants[mapFontSetting as string] ?? fontVariants['default']
+  const render = useMemo(() =>
+    renderGeography(currentColors),
+    [currentColors]
+  )
   return (<>
     <ComposableMap
       projection="geoMercator"
@@ -201,15 +244,17 @@ export const Map = memo(({
       }}
       width={width}
       height={height}
-      style={{ height: '100%' }}
+      style={{ height: '100%', [vars.mapFill]: currentColors.mapFill }}
     >
       <ZoomableGroup minZoom={0.25} maxZoom={10} /* zoom={8} minZoom={8} maxZoom={16} */ center={MAP_CENTER}>
         {useMemo(() => (
           <Geographies geography={geography}>
-            {renderGeography}
+            {render}
           </Geographies>
-        ), [geography])}
+        ), [geography, render])}
         <MapItems
+          colors={currentColors}
+          font={currentFont}
           places={places}
           selectedId={selectedId}
           setSelectedId={setSelectedId}
@@ -236,16 +281,27 @@ const DEBUG_DIV_ID = 'map-debug-div-id';
 const rounded = (num: number) => Math.round((num + Number.EPSILON) * 128) / 128
 
 const MapItems = ({
+  font,
+  colors,
   places,
   selectedId,
   setSelectedId,
 }: {
+  font: string
+  colors: MapColors,
   places: Record<PlaceId, Place> | undefined,
   selectedId: string | null,
   setSelectedId: (id: string | null) => void,
 }) => {
   const { k: rawZoomFactor } = useZoomPanContext() as ZoomPanContextValue;
   const zoomFactor = rounded(rawZoomFactor);
+
+  const placeColors = useMemo(() => {
+    if (!places) return null;
+    const byName = sortBy(Object.values(places), (place) => place.name);
+    return Object.fromEntries(byName.map(({ id }, i) => [id, randomAccentColor(i)]))
+  }, [places]);
+
   const sortedPlaces = useMemo(() =>
     places ? sortBy(Object.values(places), (place) => place.population ?? 0) : null,
     [places]
@@ -258,7 +314,9 @@ const MapItems = ({
           <g transform={`scale(${1 / zoomFactor})`}>
             <circle
               r={sizes.marker(zoomFactor, sizeClass)}
-              fill={id === selectedId ? colors.selected : colors.default}
+              fill={id === selectedId ? colors.selected : placeColors![id]}
+              stroke={colors.markerOutline ? colors.markerOutline : undefined}
+              strokeWidth={colors.markerOutline ? '0.3' : undefined}
             />
           </g>
         </Marker>
@@ -267,6 +325,7 @@ const MapItems = ({
     { sortedPlaces && sortedPlaces.map(({ id, coordinates: { lat, lon }, population, name }) => {
       const sizeClass = getSizeClass(population);
       const markerSize = sizes.marker(zoomFactor, sizeClass) 
+      const fontAdjust = font !== fontVariants['default'] ? 1.5 : 1
       return (
         <Marker key={`${id}-label`} coordinates={[lon, lat]}>
           <g
@@ -282,8 +341,8 @@ const MapItems = ({
               y={-markerSize * 1.5}
               style={{
                 display: visibility.label(zoomFactor, sizeClass) ? 'unset' : 'none',
-                fontSize: `${sizes.label(zoomFactor, sizeClass)}pt`,
-                fontFamily: 'Arial',
+                fontSize: `${sizes.label(zoomFactor, sizeClass) * fontAdjust}pt`,
+                fontFamily: font,
                 userSelect: 'none'
               }} textAnchor="middle" fill="#333"
               stroke="#fff"
@@ -298,7 +357,7 @@ const MapItems = ({
         </Marker>
       )
     }) }
-  </>), [places, selectedId, setSelectedId, zoomFactor]);
+  </>), [sortedPlaces, selectedId, setSelectedId, zoomFactor, colors, placeColors, font]);
   // const debugDiv = document.getElementById(DEBUG_DIV_ID);
   // return useMemo(() =>
   //   <>
@@ -313,3 +372,8 @@ const MapItems = ({
 }
 
 type ZoomPanContextValue = { x: number, y: number, k: number, transformString: string }
+
+const ACCENT_COLORS_ARRAY = Object.values(COLORS_ACCENT);
+export const randomAccentColor = (n: number) => {
+  return ACCENT_COLORS_ARRAY[n % ACCENT_COLORS_ARRAY.length]
+}

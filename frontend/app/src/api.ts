@@ -1,5 +1,5 @@
 import { keyBy, sample } from "lodash"
-import { useQuery } from "react-query"
+import { useQuery, UseQueryOptions } from "react-query"
 
 // const API_ROOT = 'http://localhost:3000'
 const API_ROOT = '/backend/api'
@@ -104,6 +104,11 @@ export type EventDetails = {
   "media": Record<string, ImageMediaObject>,
 }
 
+export type PostsByAuthor = Record<
+  string,
+  { "path": string, "place": string, "title": string, "author": string }[]
+>
+
 export const usePlaces = () => {
   const url = `${API_ROOT}/places.json`
   return useQuery({
@@ -175,3 +180,18 @@ export const useMapGeography = () => {
   })
 }
 
+export const usePostsByAuthor = <T = PostsByAuthor>(options: Partial<UseQueryOptions<PostsByAuthor, unknown, T>>) => {
+  const url = `${API_ROOT}/people.json`
+  return useQuery({
+    queryFn: async () => {
+      const res = await fetch(url)
+      return await res.json() as PostsByAuthor;
+    },
+    queryKey: url,
+    ...options,
+  })
+}
+
+export const useAuthors = () => {
+  return usePostsByAuthor({ select: (data) => Object.keys(data) })
+}
