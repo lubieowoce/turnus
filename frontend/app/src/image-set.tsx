@@ -127,21 +127,23 @@ const ImageSetGallery = ({ images, onImageClick, columns, sx }: ImageSetGalleryP
       paddingBottom: '3em',
       ...sx,
     }}>
-      {images.map(({ url }, index) =>
-        <AspectRatio ratio={1 / 1} key={url}>
-          <Image
-            src={url}
-            sx={{
-              objectFit: 'cover',
-              height: '100%',
-              width: '100%',
-              cursor: onImageClick ? 'pointer' : 'unset',
-              backgroundColor: IMAGE_FALLBACK_COLOR,
-            }}
-            onClick={onImageClick && (() => onImageClick(index))}
-          />
-        </AspectRatio>
-      )}
+      {images.map(({ sizes: { thumbnail: url } }, index) => {
+        return (
+          <AspectRatio ratio={1 / 1} key={url}>
+            <Image
+              src={url}
+              sx={{
+                objectFit: 'cover',
+                height: '100%',
+                width: '100%',
+                cursor: onImageClick ? 'pointer' : 'unset',
+                backgroundColor: IMAGE_FALLBACK_COLOR,
+              }}
+              onClick={onImageClick && (() => onImageClick(index))}
+            />
+          </AspectRatio>
+        )
+      })}
     </Box>
   )
 }

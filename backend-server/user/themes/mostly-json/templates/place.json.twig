@@ -12,7 +12,19 @@
             author: p.header.author,
             id: p.slug,
             summary: p.summary(500) | striptags,
-            media: p.media | map(m => { url: m.url, meta: m.meta }),
+            media: (
+                p.media
+                | filter(m => m.type == 'image')
+                | map(m => m.derivatives([600, 1500]))
+                | map(m => {
+                    url: m.url,
+                    sizes: ({
+                        thumbnail: 600,
+                        large: 1500,
+                    } | map((size) => m.getAlternatives()[size] != null ? m.getAlternatives()[size].url : m.url)),
+                })
+                | array
+            ),
         }),
     }
     | json_encode | raw

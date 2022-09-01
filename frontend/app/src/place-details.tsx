@@ -48,6 +48,7 @@ export const PlaceDetails = memo(({
             const link = `./${imageSetSummary.id}`;
             return (
               <VerticalEntry
+                key={id}
                 link={link}
                 image={Object.values(imageSetSummary.media)[0] ?? null}
                 description={
@@ -56,11 +57,12 @@ export const PlaceDetails = memo(({
                       <Heading as='h2'>{imageSetSummary.title}</Heading>
                       <Heading as='h3'>{imageSetSummary.author}</Heading>
                       <br />
-                      <Paragraph sx={{ fontSize: 0, maxHeight: `${4 * 1.5}em`, overflow: 'hidden', textOverflow: 'ellipsis' }}>{imageSetSummary.summary} ⟶</Paragraph>
+                      <Paragraph sx={{ fontSize: 0, maxHeight: `${4 * 1.5}em`, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {imageSetSummary.summary} ⟶
+                      </Paragraph>
                     </Box>
                   </Link>
                 }
-                key={id}
               />
             )
           })}
@@ -92,7 +94,7 @@ const dummyImage = () => (
 )
 
 const VerticalEntry = ({ image, link, description }: { image: ImageMediaObject | null, link: string, description: React.ReactNode }) => {
-  const imageSrc = useMemo(() => image ? image.url : dummyImage(), [image])
+  const imageSrc = useMemo(() => image ? image.sizes.thumbnail : dummyImage(), [image])
   return (
     <Box sx={{ width: imageWidths, flex: 'none' }}>
       <Link variant='reset' to={link}>

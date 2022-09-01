@@ -49,8 +49,16 @@ export type ImageSetDetails = {
 
 export type ImageMediaObject = {
   url: string,
-  meta: ImageMediaObjectMeta,
+  sizes: {
+    thumbnail: string,
+    large: string,
+  }
 }
+
+// export type ImageMediaObject = {
+//   url: string,
+//   meta: ImageMediaObjectMeta,
+// }
 
 export type ImageMediaObjectMeta = {
   "type": "image",

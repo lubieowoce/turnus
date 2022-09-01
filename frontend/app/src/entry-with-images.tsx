@@ -54,7 +54,7 @@ export const EntryWithImages = ({ description, link, images }: Props) => {
         flex: '1 auto',
         height: imageDims.height,
       }}>
-        {images.map(({ url }) =>
+        {images.map(({ sizes: { thumbnail: url } }) =>
           <Link variant='reset' key={url} to={link} sx={{ flex: 'none' }}>
             <Image
               src={url}

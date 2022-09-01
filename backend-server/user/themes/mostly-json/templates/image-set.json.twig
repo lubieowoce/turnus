@@ -4,7 +4,19 @@
         author: page.header.author,
         id: page.slug,
         content: page.content,
-        media: page.media | map(m => { url: m.url, meta: m.meta }) | array,
+        media: (
+            page.media
+            | filter(m => m.type == 'image')
+            | map(m => m.derivatives([600, 1500]))
+            | map(m => {
+                url: m.url,
+                sizes: ({
+                    thumbnail: 600,
+                    large: 1500,
+                } | map((size) => m.getAlternatives()[size] != null ? m.getAlternatives()[size].url : m.url)),
+            })
+            | array
+        ),
     }
     | json_encode | raw
 }}
