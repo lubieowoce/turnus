@@ -26,6 +26,9 @@ cache:
   driver: auto
   prefix: 'g'
 
+images:
+  seofriendly: true # nicer image names 
+
 twig:
   cache: false
   debug: true
