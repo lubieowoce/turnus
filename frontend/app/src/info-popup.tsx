@@ -24,13 +24,15 @@ export const InfoPopup = (props: Omit<DialogProps, 'className'>) => {
         {...props}
         sx={styles.dialog}
       >
-        <Box sx={{ padding: '1.5rem', maxHeight: '100%', overflowY: 'scroll' }}>
-          <Close
-            onClick={props.hide}
-            sx={{ cursor: 'pointer', position: 'absolute', top: 0, right: 0, margin: '1rem' }}
-          />
-          <Content />
-        </Box>
+        {(props.visible ?? false) && (
+          <Box sx={{ padding: '1.5rem', maxHeight: '100%', overflowY: 'scroll' }}>
+            <Close
+              onClick={props.hide}
+              sx={{ cursor: 'pointer', position: 'absolute', top: 0, right: 0, margin: '1rem' }}
+            />
+            <Content />
+          </Box>
+        )}
       </ThemedDialog>
     </ThemedDialogBackdrop>
   )
