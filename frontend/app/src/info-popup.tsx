@@ -38,10 +38,12 @@ export const InfoPopup = (props: Omit<DialogProps, 'className'>) => {
 
 type LinkDef = { label: string, link: string }
 
+const EMAIL = 'turnustwojegozycia@gmail.com'
+
 const links = {
   email: {
     label: 'e-mail',
-    link: 'mailto:turnustwojegozycia@gmail.com',
+    link: `mailto:${EMAIL}`,
   },
   instagram: {
     label: 'instagram',
@@ -74,12 +76,47 @@ const Content = () => (<>
     </Box>
   </Flex>
   <br />
-  <Paragraph sx={fancyTextStyle}>Jak masz swój projekt, zgłoś go <Anchor href={links.email.link} variant='underlined'>tutaj</Anchor>!</Paragraph>
+  <Description />
   <br />
-  <Paragraph sx={fancyTextStyle}>W projekcie wzięli udział:</Paragraph>
+  <Heading as="h2" mt="1em">W projekcie wzięli udział:</Heading>
   <br />
   <PeopleList />
 </>)
+
+const P_SPACING = "0.66em"
+
+const Description = () => <Flex sx={{ flexDirection: 'column', gap: P_SPACING }}>
+  <Paragraph>
+    <strong>Skądinąd</strong> to wystawa objazdowa i internetowe archiwum spostrzeżeń na temat miejsc pochodzenia.
+    Pomysłodawcami tego projektu są <Anchor variant='underlined' href="#turnusowicze">Turnusowicze*</Anchor> poznani dzięki grupie 
+    {' '}<Anchor variant='underlined' href='https://www.facebook.com/groups/282501663323411'>wszyscy na turnus wszyscy to turnus</Anchor>.
+    Prace o rodzinnych miastach i wsiach wyłonione podczas open callu ruszą w formie wystawy w podróż po całej Polsce.
+    Internetowe archiwum projektu jest za to ciągle otwarte na nowe historie, a naszym marzeniem jest zapełnienie mapy Polski jak największą ilością kropek.
+  </Paragraph>
+  <Paragraph>
+    <strong>Pomysłodawcy projektu</strong>: Joanna Klikowicz, Marika Gorczyńska, Bartosz Korszun, Mateusz Pipczyński, Michał Żyłowski, Wojtek Grum, Klaudia Figura, Patryk Powierza
+  </Paragraph>
+  <Paragraph id="turnusowicze">
+    <strong>* Turnusowicz</strong> - to osoba, która chociaż raz współtworzyła wydarzenie turnusu przez przesłanie swojej pracy,
+    występ, udział w spotkaniu, nieocenioną pomoc, dziękujemy, że jesteście z nami Turnusowicze!
+  </Paragraph>
+
+  <Heading as="h2" mt="1em">Przyjmij wystawę u siebie</Heading>
+  <Paragraph>
+    Chcesz, aby wystawa Skądinąd odwiedziła Twoje miasto, napisz do nas!
+    Wystarczy wysłać maila na <Anchor variant='underlined' href={links.email.link}>{EMAIL}</Anchor>,
+    w tytule maila wpisać <em>"SKĄDINĄD - WYSTAWA W (tutaj wpisz nazwę miejsca)"</em>,
+    a w treści opisać miejsce w którym mogłaby się odbyć wystawa.
+  </Paragraph>
+
+  <Heading as="h2" mt="1em">Dodaj swoje miejsce na stronę</Heading>
+  <Paragraph>
+    Jeżeli chcesz, aby twoja historia o miejscu z którego pochodzisz
+    znalazła się w naszych archiwum, wystarczy wysłać maila na <Anchor variant='underlined' href={links.email.link}>{EMAIL}</Anchor>,
+    w tytule wpisać <em>"SKĄDINĄD - NOWA HISTORIA"</em>, a w treści podać miejsce z którego pochodzisz,
+    imię i nazwisko lub pseudonim, tytuł pracy/historii (opcjonalnie), krótki opis oraz minimum jedno zdjęcie. 
+  </Paragraph>
+</Flex>
 
 const PeopleList = () => {
   const authors = useAuthors();
@@ -90,7 +127,7 @@ const PeopleList = () => {
     return <Spinner />
   }
   return (<>
-    {authors.data.map((authorName) =>
+    {[...authors.data].sort().map((authorName) =>
       <Box key={authorName}>
         <Text sx={fancyTextStyle}>{authorName}</Text>
       </Box>
