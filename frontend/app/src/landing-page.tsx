@@ -1,9 +1,16 @@
+import { useEffect } from 'react';
+import { useQueryClient } from 'react-query';
 import { Box, Image, Paragraph } from 'theme-ui';
+import { preloadMapView } from './map';
 import { Link } from './support/themed-link';
 
 
 export const Landing = () => {
   const logo = `${process.env.PUBLIC_URL}/assets/landing-logo.svg`;
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    preloadMapView(queryClient);
+  }, [queryClient])
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Image sx={{ width: ['90%', '80%', 'calc(clamp(35rem, 50%, 40rem))'] }} src={logo} />

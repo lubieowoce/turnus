@@ -109,14 +109,26 @@ export type PostsByAuthor = Record<
   { "path": string, "place": string, "title": string, "author": string }[]
 >
 
-export const usePlaces = () => {
+type QueryDef<T> = {
+  queryKey: string,
+  queryFn: () => Promise<T>,
+}
+
+export const placesQuery = (): QueryDef<Places> => {
   const url = `${API_ROOT}/places.json`
-  return useQuery({
+  return {
     queryFn: async () => {
       const res = await fetch(url)
       return await res.json() as Places;
     },
     queryKey: url,
+  }
+}
+
+
+export const usePlaces = () => {
+  return useQuery({
+    ...placesQuery(),
   })
 }
 
@@ -169,14 +181,20 @@ export type Geography = {
   [key: string]: any,
 }
 
-export const useMapGeography = () => {
+export const mapGeographyQuery = (): QueryDef<Geography> => {
   const url = `${process.env.PUBLIC_URL}/data/wojewodztwa-min.geojson`
-  return useQuery({
+  return {
+    queryKey: url,
     queryFn: async () => {
       const res = await fetch(url);
       return await res.json() as Geography;
     },
-    queryKey: url,
+  }
+}
+
+export const useMapGeography = () => {
+  return useQuery({
+    ...mapGeographyQuery(),
   })
 }
 

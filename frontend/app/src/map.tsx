@@ -13,14 +13,20 @@ import {
 } from 'theme-ui';
 import { css } from '@emotion/react';
 
-import { Place, PlaceId, usePlaces, Geography as GeographyType, useMapGeography } from "./api";
+import { Place, PlaceId, usePlaces, Geography as GeographyType, useMapGeography, placesQuery, mapGeographyQuery } from "./api";
 import { useDebounce, useOnWindowResize } from "rooks";
 import { COLORS_ACCENT, HEADER_HEIGHT } from "./config";
 import { CenterSpinner } from "./support/center-spinner";
 import { sortBy } from "lodash";
 import { useSearch } from "@tanstack/react-location";
+import { QueryClient } from "react-query";
 
-
+export const preloadMapView = async (queryClient: QueryClient) => {
+  await Promise.all([
+    queryClient.prefetchQuery(placesQuery()),
+    queryClient.prefetchQuery(mapGeographyQuery()),
+  ]);
+}
 
 export const MapView = ({ selectedId, setSelectedId }) => {
   const places = usePlaces();
@@ -37,8 +43,8 @@ export const MapView = ({ selectedId, setSelectedId }) => {
   }), []);
 
   return (
-    <Box ref={containerRef} style={style} sx={{ width: '100%', height: '100%', overflow: 'hidden' }}>
-      {(geography.isSuccess && width && height) ?
+    <Box ref={containerRef} style={style} sx={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}>
+      {(geography.isSuccess && width && height) ? (
         <Map
           width={width}
           height={height}
@@ -47,12 +53,23 @@ export const MapView = ({ selectedId, setSelectedId }) => {
           setSelectedId={setSelectedId}
           geography={geography.data}
         />
-        :
+      ) : (
         <CenterSpinner />
-      }
+      )}
+      {places.isLoading && (
+        <>
+        <Box sx={{ backgroundColor: 'background', ...absoluteFull, zIndex: 10, opacity: 0.5 }}>
+        </Box>
+        <Box sx={{ ...absoluteFull, zIndex: 20 }}>
+          <CenterSpinner />
+        </Box>
+        </>
+      )}
     </Box>
   );
 }
+
+const absoluteFull = { position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 } as const
 
 type ElementSize = { width: number, height: number }
 
