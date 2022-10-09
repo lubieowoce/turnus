@@ -19,24 +19,17 @@
       }
       */
 
+      body {
+        margin: 0;
+        /* font-family: 'Garamond', 'Times New Roman', Times, serif; */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
       #root {
         height: 100vh;
         min-height: 100vh;
       }
-
-      @font-face {
-        font-family: 'Junicode Condensed';
-        src: url('%PUBLIC_URL%/assets/Junicode-BoldCondensed.ttf');
-        font-style: normal;
-        font-weight: 600;
-      }
-      @font-face {
-        font-family: 'Junicode Condensed';
-        src: url('%PUBLIC_URL%/assets/Junicode-BoldItalicCondensed.ttf');
-        font-style: italic;
-        font-weight: 600;
-      }
-
     </style>
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -67,5 +60,32 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <style>
+      @font-face {
+        font-family: 'Junicode Condensed';
+        src: url('%PUBLIC_URL%/assets/Junicode/Junicode-BoldCondensed.ttf');
+        font-style: normal;
+        font-weight: 600;
+      }
+      @font-face {
+        font-family: 'Junicode Condensed';
+        src: url('%PUBLIC_URL%/assets/Junicode/Junicode-BoldItalicCondensed.ttf');
+        font-style: italic;
+        font-weight: 600;
+      }
+
+      @font-face {
+        font-family: 'Karrik';
+        src: url('%PUBLIC_URL%/assets/Karrik/Karrik-Regular.woff2');
+        font-style: normal;
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: 'Karrik';
+        src: url('%PUBLIC_URL%/assets/Karrik/Karrik-Italic.woff2');
+        font-style: italic;
+        font-weight: 400;
+      }
+    </style>
   </body>
 </html>

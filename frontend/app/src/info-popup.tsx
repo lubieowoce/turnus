@@ -2,7 +2,7 @@ import { Box, Close, Flex, Heading, Paragraph, Spinner, Text, ThemeUIStyleObject
 import { DialogProps } from "reakit/Dialog";
 import { fancyTextStyle } from "./config";
 import { ThemedDialog, ThemedDialogBackdrop } from "./support/themed-dialog";
-import { useAuthors, usePostsByAuthor } from './api';
+import { useAuthors } from './api';
 import { Anchor } from './support/themed-link';
 
 const styles = {

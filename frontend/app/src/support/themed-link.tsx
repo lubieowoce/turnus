@@ -1,6 +1,7 @@
 import { Link as BaseLink, LinkProps as BaseLinkProps } from '@tanstack/react-location';
 import { ClassNames } from "./classnames";
 import { ThemeUIStyleObject } from 'theme-ui';
+import { forwardRef } from 'react';
 
 const base = {
   color: 'text',
@@ -48,9 +49,9 @@ type BaseProps = {
   variant?: keyof typeof styles
 };
 
-export type LinkProps = BaseProps & BaseLinkProps;
+export type LinkProps = BaseProps & { noActive?: boolean } & BaseLinkProps;
 
-export const Link = ({ variant = 'default', sx, ...props }: LinkProps) => {
+export const Link = ({ variant = 'default', noActive = false, sx, ...props }: LinkProps) => {
   return (
     <ClassNames>{(cls) => {
       const activeCls = cls(styles[variant].active);
@@ -58,7 +59,7 @@ export const Link = ({ variant = 'default', sx, ...props }: LinkProps) => {
       return (
         <BaseLink
           {...props}
-          getActiveProps={() => ({ className: `${activeCls} ${dynamicCls}`  })}
+          getActiveProps={noActive ? undefined : () => ({ className: `${activeCls} ${dynamicCls}`  })}
           className={dynamicCls}
         />
       )
@@ -68,16 +69,17 @@ export const Link = ({ variant = 'default', sx, ...props }: LinkProps) => {
 
 export type AnchorProps = Omit<React.HTMLProps<HTMLAnchorElement>, 'className'> & BaseProps;
 
-export const Anchor = ({ variant = 'default', sx, ...props }: AnchorProps) => {
+export const Anchor = forwardRef<HTMLAnchorElement, AnchorProps>(({ variant = 'default', sx, ...props }, ref) => {
   return (
     <ClassNames>{(cls) => {
       const dynamicCls = cls({ ...styles[variant].base, ...sx });
       return (
         <a
+          ref={ref}
           className={dynamicCls}
           {...props}
         />
       )
     }}</ClassNames>
   )
-}
+})

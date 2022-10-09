@@ -4,9 +4,7 @@ import { useCallback, useState } from 'react';
 import {
   Box,
   Flex,
-  Heading,
   ThemeProvider,
-  ThemeUIStyleObject,
 } from 'theme-ui';
 import { MapView } from './map'
 import { theme } from './theme';
@@ -17,8 +15,11 @@ import {
   Router,
   useMatch,
   useNavigate,
-  Navigate,
+  useLocation,
+  useSearch,
 } from '@tanstack/react-location'
+import { ReactLocationDevtools } from '@tanstack/react-location-devtools';
+
 import { useEventDetails, useEvents, useImageSet, usePlace, usePlaces } from './api';
 import { PlaceDetails } from './place-details';
 import { useGoBack } from './utils';
@@ -53,7 +54,7 @@ const Root = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
-        <ReactQueryDevtools />
+        {/* <ReactQueryDevtools /> */}
         <Router
           location={location}
           routes={routes}
@@ -63,17 +64,55 @@ const Root = () => {
   );
 }
 
-const linksLeft = [
-  { to: '/miejscowosci', label: 'miejscowości' },
-  { to: '/mapa', label: 'mapa' },
-  { to: '/wystawy', label: 'wystawy' },
+const linkColors = [
+  '#01c4ff',
+  '#ff7600',
+  '#02ff09',
+  '#ffff02'
 ]
+
+const navLinks = [
+  {
+    to: '/miejscowosci',
+    label: 'miejscowości',
+    color: linkColors[0],
+    illustration: `${process.env.PUBLIC_URL}/assets/menu/miejscowosci.svg`,
+    exact: true,
+  },
+  {
+    to: '/mapa',
+    label: 'mapa',
+    color: linkColors[1],
+    illustration: `${process.env.PUBLIC_URL}/assets/menu/mapa.svg`,
+  },
+  {
+    to: '/wystawy',
+    label: 'wystawy',
+    color: linkColors[2],
+    illustration: `${process.env.PUBLIC_URL}/assets/menu/wystawy.svg`,
+  },
+]
+
+
 
 const MainLayout = () => {
   const infoPopup = useDialogState();
+  const location = useLocation();
+  const isModalOpen = useSearch().modal === 'info';
+  const navigate = useNavigate();
+  const closeModal = () => navigate({
+    to: location.current.pathname,
+    search: ({ modal, ...prev } = {}) => prev,
+  })
 
   const linksRight = [
-    <DialogDisclosure as="a" style={{ ...fancyTextStyle, cursor: 'pointer' }} {...infoPopup}>
+    <DialogDisclosure
+      as={Link}
+      to={location.current.pathname}
+      search={{ modal: 'info' }}
+      noActive
+      sx={fancyTextStyle} {...infoPopup}
+    >
       info
     </DialogDisclosure>
   ];
@@ -87,7 +126,7 @@ const MainLayout = () => {
         alignItems: 'stretch',
       }}>
         <Flex as='nav' sx={{ flex: `0 0 ${HEADER_HEIGHT}`, backgroundColor: 'background' }}>
-          <MainNav links={linksLeft} />
+          <MainNav links={navLinks} />
           <div style={{ flex: '1 auto' }} />
           {linksRight.map((el, i) =>
             <Box key={el.props.to ?? `${i}`} py='1em' px={PADDING_BODY.horizontal}>{el}</Box>)
@@ -97,7 +136,8 @@ const MainLayout = () => {
           <Outlet />
         </main>
       </div>
-      <InfoPopup {...infoPopup} />
+      <InfoPopup {...infoPopup} visible={isModalOpen} hide={closeModal} />
+      {process.env.NODE_ENV === 'development' && <ReactLocationDevtools />}
     </>
   )
 }
@@ -194,9 +234,12 @@ const ErrorWrapper = () => {
 
 const routes: Route[] = [
   {
-    path: '/',
     element: <MainLayout />,
     children: [
+      {
+        path: '/',
+        element: <Landing />,
+      },
       {
         path: 'miejscowosci',
         element: <ErrorWrapper />,
@@ -241,10 +284,6 @@ const routes: Route[] = [
             errorElement: <ErrorFallback />,
           },
         ],
-      },
-      {
-        // path: '/',
-        element: <Landing />,
       },
     ],
   }

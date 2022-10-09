@@ -9,7 +9,7 @@ import {
 import { memo, RefCallback, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import {
-  Box, Container, Spinner,
+  Box, Container, Spinner, useThemeUI,
 } from 'theme-ui';
 import { css } from '@emotion/react';
 
@@ -150,7 +150,7 @@ const colorVariants = {
 }
 
 const fontVariants = {
-  'default': 'Arial',
+  'default': 'Karrik, Arial, sans-serif',
   'experimental': 'Junicode Condensed'
 }
 

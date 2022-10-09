@@ -1,12 +1,11 @@
-import { PropsWithChildren } from "react";
 import { useDialogState } from "reakit/Dialog";
-import { Box, Flex, ThemeUIStyleObject, Close, Text } from "theme-ui";
+import { Box, Flex, Close, Image } from "theme-ui";
 import { fancyTextStyle, PADDING_BODY, HEADER_HEIGHT } from "./config";
 import { ResponsiveSwitch } from "./support/responsive";
 import { ThemedDialog, ThemedDialogBackdrop } from "./support/themed-dialog";
 import { Link } from "./support/themed-link";
 
-type LinkDef = { to: string, label: string }
+type LinkDef = { to: string, label: string, color: string, illustration: string }
 
 export const MainNav = ({ links }: { links: LinkDef[] }) => {
   return (
@@ -18,7 +17,7 @@ export const MainNav = ({ links }: { links: LinkDef[] }) => {
         small={<PopupNav links={links} />}
         big={links.map((link) =>
           <Box key={link.to}>
-            <Link sx={fancyTextStyle} to={link.to}>{link.label}</Link>
+            <Link sx={{ ...fancyTextStyle, textDecorationColor: `${link.color} !important` }} to={link.to}>{link.label}</Link>
           </Box>
         )}
       />
@@ -26,24 +25,9 @@ export const MainNav = ({ links }: { links: LinkDef[] }) => {
   )
 }
 
-const popupNavColors = [
-  'rgba(28, 186, 78)',
-  'rgba(221, 221, 221)',
-  'rgba(74, 192, 244)',
-]
-
 const PopupNav = ({ links }: { links: LinkDef[] }) => {
   const navPopup = useDialogState();
 
-  const item = ({ to, color, label }) => (
-    <Link key={to} variant='reset' to={to} sx={{ flex: '1 auto' }} onClick={navPopup.hide}>
-      <Round color={color} sx={{ height: '100%' }}>
-        <Text style={fancyTextStyle}>
-          {label}
-        </Text>
-      </Round>
-    </Link>
-  );
   return (
     <>
       <Link
@@ -53,20 +37,24 @@ const PopupNav = ({ links }: { links: LinkDef[] }) => {
       >
         menu
       </Link>
-      <ThemedDialogBackdrop {...navPopup} sx={{ backgroundColor: 'rgba(255,255,255, 0.35)'}}>
+      <ThemedDialogBackdrop {...navPopup} sx={{ backgroundColor: 'background'}}>
         <ThemedDialog {...navPopup} sx={{ top: HEADER_HEIGHT }}>
           <Flex sx={{
             height: '100%',
             flexDirection: 'column',
             justifyContent: 'stretch',
-            alignItems: 'stretch',
+            alignItems: 'center',
           }}>
             <Close
               onClick={navPopup.hide}
               sx={{ cursor: 'pointer', position: 'fixed', top: 0, right: 0, margin: '1rem', backgroundColor: 'background' }}
             />
-            {links.map(({ to, label }, i) =>
-              item({ to, label, color: popupNavColors[i % popupNavColors.length] })
+            {links.map(({ to, illustration, label }) =>
+              <Box key={to} sx={{ flex: '1 auto', maxWidth: '80vw' }}>
+                <Link key={to} variant='reset' to={to} onClick={navPopup.hide}>
+                  <Image src={illustration} alt={label} />
+                </Link>
+              </Box>
             )}
           </Flex>
         </ThemedDialog>
@@ -74,18 +62,3 @@ const PopupNav = ({ links }: { links: LinkDef[] }) => {
     </>
   )
 }
-
-type RoundProps = PropsWithChildren<{ color: string, sx?: ThemeUIStyleObject }>
-
-const Round = ({ color, sx, children }: RoundProps) => (
-  <Flex sx={{
-    borderRadius: '100%',
-    border: '3px solid black',
-    backgroundColor: color,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...sx,
-  }}>
-    {children}
-  </Flex>
-);

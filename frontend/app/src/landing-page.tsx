@@ -3,7 +3,7 @@ import { useQueryClient } from 'react-query';
 import { Box, Image, Paragraph } from 'theme-ui';
 import { preloadMapView } from './map';
 import { Link } from './support/themed-link';
-
+import { HEADER_HEIGHT } from './config';
 
 export const Landing = () => {
   const logo = `${process.env.PUBLIC_URL}/assets/landing-logo.svg`;
@@ -12,13 +12,13 @@ export const Landing = () => {
     preloadMapView(queryClient);
   }, [queryClient])
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <Image sx={{ width: ['90%', '80%', 'calc(clamp(35rem, 50%, 40rem))'] }} src={logo} />
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', paddingBottom: HEADER_HEIGHT, justifyContent: ['center', undefined] }}>
+      <Image sx={{ width: ['80%', '80%', 'calc(clamp(35rem, 50%, 40rem))'] }} src={logo} />
       <Link to="/mapa" variant="reset" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Paragraph sx={{ width: ['90%', '80%', 'calc(clamp(30rem, 50%, 35rem))'], fontFamily: 'heading', fontSize: 2, textAlign: 'center', whiteSpace: 'pre-wrap', lineHeight: 1 }}>
+        <Paragraph sx={{ width: ['80%', 'calc(min(30ch, 50vw))'], fontFamily: 'heading', fontSize: [3, 3, 2], textAlign: 'center', lineHeight: 1, marginTop: '0.5em' }}>
           {text}
         </Paragraph>
-        <Box sx={{ fontFamily: 'heading', fontSize: 3, color: `${colors.blue}`}}>
+        <Box sx={{ fontFamily: 'heading', fontSize: [4, 4, 3], color: `${colors.blue}`}}>
           ⟶
         </Box>
       </Link>

@@ -14,8 +14,8 @@ const baseTheme = omit(rawBaseTheme, [
 
 export const theme = merge(baseTheme as Theme, {
   fonts: {
-    body: 'Arial',
-    heading: 'Junicode Condensed'
+    body: 'Karrik, Arial, sans-serif',
+    heading: '"Junicode Condensed", Georgia, serif'
   },
   colors: {
     background: '#f3f2ef',

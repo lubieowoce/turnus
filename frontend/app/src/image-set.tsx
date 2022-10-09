@@ -24,6 +24,7 @@ import {
   ImageSetDetails as ImageSetDetailsType,
 } from "./api";
 import useEventCallback from 'use-event-callback';
+import { useLocation, useSearch, useNavigate } from '@tanstack/react-location';
 
 
 export const ImageSetDetails = memo(({
@@ -31,8 +32,70 @@ export const ImageSetDetails = memo(({
 }: {
   imageSet: ImageSetDetailsType,
 }) => {
-  const images = useMemo(() => Object.values(imageSet.media), [imageSet.media]);
-  const [lightbox, setLightbox] = useState({ imageIndex: 0, isOpen: false });
+  const images = useMemo(() =>
+    Object.entries(imageSet.media).map(([id, m]) => ({ id, ...m })),
+    [imageSet.media]
+  );
+  const indexToImageId = (index: number) => images[index].id
+  const imageIdToIndex = (id: string) => images.findIndex((m) => m.id === id)
+  
+  const searchToState = (search): State => ({
+    isOpen: search.modal === 'image',
+    imageIndex: (search.image ? imageIdToIndex(search.image as string) : undefined) ?? 0,
+  })
+
+  const stateToSearch = (state: State) => (
+    (state.isOpen ? { modal: 'image', image: indexToImageId(state.imageIndex) } : {})
+  )
+
+  type State = { isOpen: boolean, imageIndex: number }
+  type Updater<T> = State | ((prev: State) => State)
+
+  const location = useLocation();
+  const search = useSearch();
+  const lightbox = searchToState(search)
+  const navigate = useNavigate();
+
+  const setLightbox = (updater: Updater<State>) => {
+    const newState = typeof updater === 'function' ? updater(lightbox) : updater;
+    const shouldPush = !lightbox.isOpen
+    if (!newState.isOpen) {
+      onClose()
+    }
+    navigate({
+      to: location.current.pathname,
+      search: stateToSearch(newState),
+      // fromCurrent: !lightbox.isOpen,
+      replace: !shouldPush
+    });
+  }
+
+  const onClose = useEventCallback(() => {
+    const el = document.getElementsByClassName(lightboxClass).item(0);
+    if (!el) {
+      // something weird happened, make sure we're not stuck with a locked scroll
+      clearAllBodyScrollLocks()
+      return;
+    }
+    enableBodyScroll(el);
+  })
+
+  useEffect(() => {
+    // if the view state was changed by the router (i.e. a "back" navigation),
+    // onCloseRequest won't fire. so we need to do it ourselves :(
+    if (!lightbox.isOpen) {
+      onClose();
+    }
+  }, [lightbox.isOpen, onClose]);
+
+  useEffect(() => {
+    // always clear scroll lock when exiting this route, just in case
+    // (if the lighttbox was exited with a router-level "back",
+    //  we'd be stuck with a locked scroll)
+    return () => {
+      onClose();
+    }
+  }, [onClose]);
 
   // the lightbox doesn't expose a wrapper ref or anything,
   // so we need to do it the old way
@@ -46,29 +109,9 @@ export const ImageSetDetails = memo(({
     disableBodyScroll(el);
   });
 
-  const unlockScroll = useEventCallback(() => {
-    const el = document.getElementsByClassName(lightboxClass).item(0);
-    if (!el) {
-      // something weird happened, make sure we're not stuck with a locked scroll
-      clearAllBodyScrollLocks()
-      return;
-    }
-    enableBodyScroll(el);
-  })
-
-  useEffect(() => {
-    // always clear scroll lock
-    // (if the lighttbox was exited with a router-level "back",
-    //  we'd be stuck with a locked scroll)
-    return () => {
-      console.log('clearing scroll')
-      unlockScroll();
-    }
-  }, [unlockScroll]);
-
   return (
     <Box>
-      <Heading as='h1' sx={{ flex: '1 1 auto' }}>
+      <Heading as='h2' sx={{ flex: '1 1 auto' }}>
         {imageSet.title}
       </Heading>
       <Heading as='h3' sx={{ flex: '1 1 auto' }}>
@@ -93,11 +136,11 @@ export const ImageSetDetails = memo(({
           <Lightbox
             wrapperClassName={lightboxClass}
             mainSrc={images[lightbox.imageIndex].url}
-            nextSrc={images[plusMod(lightbox.imageIndex, +1, images.length)].url}
-            prevSrc={images[plusMod(lightbox.imageIndex, -1, images.length)].url}
+            nextSrc={images[lightbox.imageIndex + 1]?.url}
+            prevSrc={images[lightbox.imageIndex - 1]?.url}
             reactModalProps={{ shouldFocusAfterRender: false }}
             onAfterOpen={lockScroll}
-            onCloseRequest={() => { setLightbox({ isOpen: false, imageIndex: 0 }); unlockScroll(); }}
+            onCloseRequest={() => { setLightbox({ isOpen: false, imageIndex: 0 }) }}
             onMoveNextRequest={() => setLightbox((p) => ({ ...p, imageIndex: plusMod(p.imageIndex, +1, images.length)}))}
             onMovePrevRequest={() => setLightbox((p) => ({ ...p, imageIndex: plusMod(p.imageIndex, -1, images.length)}))}
           />

@@ -28,13 +28,13 @@ export const EntryWithImages = ({ description, link, images }: Props) => {
       flexDirection: ['column-reverse', null, 'row'],
       width: '100%',
       maxWidth: '100%',
-      transition: 'all ease-in-out 0.1s',
-      background: 'rgba(0,0,0, 0)',
-      outline: '1em solid rgba(0,0,0, 0)',
-      '&:hover': {
-        backgroundColor: 'rgba(0,0,0, 0.05)',
-        outlineColor: 'rgba(0,0,0, 0.05)',
-      }
+      // transition: 'all ease-in-out 0.1s',
+      // background: 'rgba(0,0,0, 0)',
+      // outline: '1em solid rgba(0,0,0, 0)',
+      // '&:hover': {
+      //   backgroundColor: 'rgba(0,0,0, 0.05)',
+      //   outlineColor: 'rgba(0,0,0, 0.05)',
+      // }
     }}>
       <Link
         variant='reset' to={link}
