@@ -53,12 +53,18 @@ export const PlaceDetails = memo(({
                 image={Object.values(imageSetSummary.media)[0] ?? null}
                 description={
                   <Link variant='reset' to={link}>
-                    <Box mt='1em'>
+                    <Box my='1em'>
                       <Heading as='h2'>{imageSetSummary.title}</Heading>
                       <Heading as='h3'>{imageSetSummary.author}</Heading>
                       <br />
-                      <Paragraph sx={{ fontSize: 0, maxHeight: `${4 * 1.5}em`, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {imageSetSummary.summary} ⟶
+                      <Paragraph
+                        sx={{
+                          fontSize: 0,
+                          ...maxLinesStyle(4),
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {imageSetSummary.summary}
                       </Paragraph>
                     </Box>
                   </Link>
@@ -72,7 +78,13 @@ export const PlaceDetails = memo(({
   );
 })
 
-
+const maxLinesStyle = (nLines: number) => ({
+  display: '-webkit-box',
+  '-webkit-box-orient': 'vertical',
+  '-webkit-line-clamp': `${nLines}`,
+  lineClamp: `${nLines}`,
+  overflow: 'hidden',
+});
 
 const CloseButton = ({ onClick }) => (
   <Close onClick={onClick} sx={{ cursor: 'pointer' }} />
