@@ -25,8 +25,9 @@ fi
 docker volume inspect "$DEV_VOLUME_NAME" || docker volume create "$DEV_VOLUME_NAME"
 
 docker build 'backend-server/' --tag "$TAG"
-docker run -d \
-  -v "$(realpath ./dev-pages):/var/www/grav/user/pages" \
+docker run --rm -d \
+  -v "$(realpath ./dev-pages/places):/var/www/grav/user/pages/places" \
+  -v "$(realpath ./dev-pages/events):/var/www/grav/user/pages/events" \
   -v "$DEV_VOLUME_NAME:/var/www/grav/user/accounts" \
   -p "$BACKEND_PORT:80" \
   "$TAG"
