@@ -13,7 +13,7 @@ const styles = {
     left: 'unset',
     width: ['100vw', 'sidebar'],
     backgroundColor: 'backgroundYellow',
-    boxShadow: 'medium',
+    boxShadow: '0 0 40px rgba(0,0,0,0.3)',
   } as ThemeUIStyleObject,
 }
 
