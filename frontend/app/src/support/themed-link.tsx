@@ -51,13 +51,17 @@ type BaseProps = {
 
 export type LinkProps = BaseProps & { noActive?: boolean } & BaseLinkProps;
 
-export const Link = ({ variant = 'default', noActive = false, sx, ...props }: LinkProps) => {
+export const Link = forwardRef<
+  HTMLAnchorElement,
+  LinkProps
+>(({ variant = 'default', noActive = false, sx, ...props }, ref) => {
   return (
     <ClassNames>{(cls) => {
       const activeCls = cls(styles[variant].active);
       const dynamicCls = cls({ ...styles[variant].base, ...sx });
       return (
         <BaseLink
+          _ref={ref}
           {...props}
           getActiveProps={noActive ? undefined : () => ({ className: `${activeCls} ${dynamicCls}`  })}
           className={dynamicCls}
@@ -65,7 +69,7 @@ export const Link = ({ variant = 'default', noActive = false, sx, ...props }: Li
       )
     }}</ClassNames>
   )
-}
+})
 
 export type AnchorProps = Omit<React.HTMLProps<HTMLAnchorElement>, 'className'> & BaseProps;
 
