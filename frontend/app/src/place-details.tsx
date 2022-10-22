@@ -7,12 +7,14 @@ import {
   Image,
   Text,
   Flex,
+  ParagraphProps,
 } from 'theme-ui';
 
 import { ImageMediaObject, ImageSet as ImageSetType, PlaceDetails as PlaceDetailsType } from "./api";
 import { useGoBack } from './utils';
 import { IMAGE_FALLBACK_COLOR, PADDING_BODY } from './config';
 import { Link } from './support/themed-link';
+import { useApplyTheme } from './support/use-apply-theme';
 
 export const PlaceDetails = memo(({
   place,
@@ -57,7 +59,7 @@ export const PlaceDetails = memo(({
                       <Heading as='h2'>{imageSetSummary.title}</Heading>
                       <Heading as='h3'>{imageSetSummary.author}</Heading>
                       <br />
-                      <Paragraph
+                      {/* <Paragraph
                         sx={{
                           fontSize: 0,
                           ...maxLinesStyle(4),
@@ -65,7 +67,10 @@ export const PlaceDetails = memo(({
                         }}
                       >
                         {imageSetSummary.summary}
-                      </Paragraph>
+                      </Paragraph> */}
+                      <ParagraphWithReadMore lines={4} backgroundColor={'background'} fontSize={0}>
+                        {imageSetSummary.summary}
+                      </ParagraphWithReadMore>
                     </Box>
                   </Link>
                 }
@@ -78,13 +83,52 @@ export const PlaceDetails = memo(({
   );
 })
 
+type ParagraphWithReadMoreProps = React.PropsWithChildren<
+  {
+    lines: number,
+    backgroundColor: string,
+    fontSize?: number
+  } & Omit<ParagraphProps, 'children'>
+>
+
+const ParagraphWithReadMore = memo(({ children, lines, backgroundColor, fontSize, ...props }: ParagraphWithReadMoreProps) => {
+  const applyTheme = useApplyTheme();
+  const resolvedBackgroundColor = applyTheme({ backgroundColor }).backgroundColor!;
+  return (
+    <Paragraph {...props} sx={{
+      position: 'relative',
+      ...maxLinesStyle(lines),
+      textOverflow: "ellipsis",
+      fontSize,
+    }}>
+      {children}
+      <Box sx={{
+        position: 'absolute',
+        zIndex: '10',
+        right: 0,
+        bottom: 0,
+      }}>
+        <Flex>
+          <Box sx={{
+            // in theory all this could be done with `text-overflow: fade`,
+            // but that's not supported almost anywhere yet
+            background: `linear-gradient(90deg, transparent 0%, ${resolvedBackgroundColor} 100%)`,
+            width: '5ch',
+          }} />
+          <Box sx={{ paddingLeft: '1ch', paddingRight: '2ch', backgroundColor }}>⟶</Box>
+        </Flex>
+      </Box>
+    </Paragraph>
+  )
+})
+
 const maxLinesStyle = (nLines: number) => ({
   display: '-webkit-box',
   '-webkit-box-orient': 'vertical',
   '-webkit-line-clamp': `${nLines}`,
   lineClamp: `${nLines}`,
   overflow: 'hidden',
-});
+} as const);
 
 const CloseButton = ({ onClick }) => (
   <Close onClick={onClick} sx={{ cursor: 'pointer' }} />
