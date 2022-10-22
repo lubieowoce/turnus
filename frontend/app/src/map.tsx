@@ -118,24 +118,24 @@ type Point = [lon: number, lat: number]
 const MAP_CENTER: Point = [19.2525, 52.0652]
 
 
-type MapColors = typeof colorsBlue
-
-const colorsBlue = {
-  default: 'black',
-  selected: 'black',
-  mapFill: 'rgb(194, 231, 254)',
-  markerOutline: null as string | null,
-  mapOutline: 'rgb(179, 216, 238)',
-}
+type MapColors = typeof colorsLight
 
 
-const colorsLight: MapColors = {
+const colorsLight = {
   default: 'black',
   selected: 'black',
   mapFill: '#f9f8f6',
   // mapFill: '#f9f9f9',
   markerOutline: 'black',
+  mapOutlineThickness: '1',
   mapOutline: 'lightgray',
+}
+
+const colorsLight2: MapColors = {
+  ...colorsLight,
+  markerOutline: 'transparent',
+  mapOutline: 'black',
+  mapOutlineThickness: '0.5',
 }
 
 const colorsTransparent: MapColors = {
@@ -144,8 +144,8 @@ const colorsTransparent: MapColors = {
 }
 
 const colorVariants = {
-  'blue': colorsBlue,
   'light': colorsLight,
+  'light2': colorsLight2,
   'transparent': colorsTransparent,
 }
 
@@ -223,7 +223,7 @@ const renderGeography = (colors: MapColors) => ({ geographies }) => geographies.
     style={Object.fromEntries(['default', 'hover', 'active'].map((v) => [v, { fill: `var(${vars.mapFill})`}]))}
     // fill={colors.mapFill}
     stroke={colors.mapOutline}
-    strokeWidth="1"
+    strokeWidth={colors.mapOutlineThickness}
   />
 ))
 
