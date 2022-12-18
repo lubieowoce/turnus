@@ -4,6 +4,7 @@
         author: page.header.author,
         id: page.slug,
         content: page.content,
+        media_order: page.header.media_order | split(','),
         media: (
             page.media
             | filter(m => m.type == 'image')

@@ -5,6 +5,7 @@
         time: page.header.time,
         id: page.slug,
         content: page.content,
+        media_order: page.header.media_order | split(','),
         media: page.media | map(m => { url: m.url, meta: m.meta }) | array,
     }
     | json_encode | raw

@@ -29,6 +29,7 @@ import useEventCallback from 'use-event-callback';
 import { useLocation, useSearch, useNavigate } from '@tanstack/react-location';
 import { maxBy, minBy, chunk as toChunks } from 'lodash';
 import { Clickable } from 'reakit/Clickable';
+import { useOrderedMedia } from './support/media-order';
 
 
 export const ImageSetDetails = memo(({
@@ -36,10 +37,7 @@ export const ImageSetDetails = memo(({
 }: {
   imageSet: ImageSetDetailsType,
 }) => {
-  const images = useMemo(() =>
-    Object.entries(imageSet.media).map(([id, m]) => ({ id, ...m })),
-    [imageSet.media]
-  );
+  const images = useOrderedMedia(imageSet.media, imageSet.media_order);
   const indexToImageId = (index: number) => images[index].id
   const imageIdToIndex = (id: string) => images.findIndex((m) => m.id === id)
 

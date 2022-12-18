@@ -12,6 +12,7 @@
             author: p.header.author,
             id: p.slug,
             summary: p.summary(500) | striptags,
+            media_order: p.header.media_order | split(','),
             media: (
                 p.media
                 | filter(m => m.type == 'image')

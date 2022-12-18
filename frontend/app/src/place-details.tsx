@@ -15,6 +15,7 @@ import { useGoBack } from './utils';
 import { IMAGE_FALLBACK_COLOR, PADDING_BODY } from './config';
 import { Link } from './support/themed-link';
 import { useApplyTheme } from './support/use-apply-theme';
+import { firstByMediaOrder } from './support/media-order';
 
 export const PlaceDetails = memo(({
   place,
@@ -52,7 +53,7 @@ export const PlaceDetails = memo(({
               <VerticalEntry
                 key={id}
                 link={link}
-                image={Object.values(imageSetSummary.media)[0] ?? null}
+                image={firstByMediaOrder(imageSetSummary.media, imageSetSummary.media_order)}
                 description={
                   <Link variant='reset' to={link}>
                     <Box my='1em'>

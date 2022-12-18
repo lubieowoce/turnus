@@ -10,6 +10,7 @@ import {
 import { EventList as EventListType } from "./api";
 import { PADDING_BODY } from './config';
 import { EntryWithImages } from './entry-with-images';
+import { sortByMediaOrder } from './support/media-order';
 
 export const EventList = memo(({
   eventList,
@@ -37,7 +38,7 @@ export const EventList = memo(({
                   <Paragraph sx={{ fontSize: 0 }}>{eventSummary.summary} ⟶</Paragraph>
                 </Box>
               }
-              images={Object.values(eventSummary.media)}
+              images={sortByMediaOrder(eventSummary.media, eventSummary.media_order)}
               key={id}
             />
           )}

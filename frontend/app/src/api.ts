@@ -36,6 +36,7 @@ export type ImageSet = {
   "id": string,
   "summary": string,
   "media": Record<string, ImageMediaObject>,
+  "media_order": string[],
 }
 
 export type ImageSetDetails = {
@@ -44,6 +45,7 @@ export type ImageSetDetails = {
   "id": string,
   "content": string,
   "media": Record<string, ImageMediaObject>,
+  "media_order": string[],
 }
 
 export type ImageMediaObject = {
@@ -100,6 +102,7 @@ export type EventSummary = {
   "id": string,
   "summary": string,
   "media": Record<string, ImageMediaObject>,
+  "media_order": string[],
 }
 
 export type EventDetails = {
@@ -109,6 +112,7 @@ export type EventDetails = {
   "id": string,
   "content": string,
   "media": Record<string, ImageMediaObject>,
+  "media_order": string[],
 }
 
 export type PostsByAuthor = Record<
