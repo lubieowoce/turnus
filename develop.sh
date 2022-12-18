@@ -19,7 +19,8 @@ if [ $RUNNING = 0 ]; then
   echo 'No backend server running, initializing'
   docker build 'backend-server/' --tag 'skadinad/backend-server'
   docker run -d \
-    -v "$(realpath ./dev-pages):/var/www/grav/user/pages" \
+    -v "$PLACES_DIR:/var/www/grav/user/pages/places" \
+    -v "$(realpath ./dev-pages/events):/var/www/grav/user/pages/events" \
     -v "$DEV_VOLUME_NAME:/var/www/grav/user/accounts" \
     -p "$BACKEND_PORT:80" \
     'skadinad/backend-server'
