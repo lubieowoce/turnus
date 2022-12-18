@@ -14,6 +14,10 @@ function realpath() {
   node -p 'require("fs").realpathSync(process.argv[1] ?? ".")' "$1"
 }
 
+# PLACES_DIR="$(realpath ./dev-pages/places)"
+PLACES_DIR='/Users/owoce/Documents/skadinad-content/outputs/pages/places'
+
+
 RUNNING=$(docker ps --filter ancestor='skadinad/backend-server' --format '{{.ID}}' | wc -l)
 if [ $RUNNING = 0 ]; then
   echo 'No backend server running, initializing'
